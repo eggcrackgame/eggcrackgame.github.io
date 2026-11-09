@@ -1,0 +1,1145 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Egg Crack</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@700;800&display=swap">
+<style>
+/* Layout: one centered play column (header, banner ad, taps counter, egg, bonus row, banner ad) with tall ad rails either side on wide screens. */
+:root {
+  --sky-1: #3aa5ff;
+  --sky-2: #0b5fe8;
+  --ink: #14194d;
+  --gold: #ffc62e;
+  --gold-deep: #f29a00;
+  --pink: #ff3fa0;
+  --mint: #3ff0b0;
+  --paper: #ffffff;
+  --soft: #dbe9ff;
+  --muted: #4a528f;
+  --font-display: "Baloo 2", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Nunito", "Trebuchet MS", system-ui, sans-serif;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+
+body {
+  margin: 0;
+  position: relative;
+  overflow-x: hidden;
+  font-family: var(--font-body);
+  font-weight: 700;
+  color: var(--ink);
+  background: linear-gradient(180deg, var(--sky-1) 0%, var(--sky-2) 100%);
+  background-attachment: fixed;
+  padding-block: 12px 24px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* soft sunburst behind the egg */
+body::after {
+  content: "";
+  position: fixed;
+  inset: -40%;
+  z-index: 0;
+  pointer-events: none;
+  background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,.10) 0deg 9deg, rgba(255,255,255,0) 9deg 18deg);
+  animation: spin 90s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+/* ---------- layout ---------- */
+.shell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 480px;
+  margin: 0 auto;
+}
+.play {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+
+/* ---------- header ---------- */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand {
+  margin: 0;
+  font: 800 clamp(20px, 6.2vw, 32px)/1 var(--font-display);
+  color: #fff;
+  letter-spacing: .01em;
+  -webkit-text-stroke: 6px var(--ink);
+  paint-order: stroke fill;
+  text-shadow: 0 3px 0 var(--ink);
+  white-space: nowrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font: 800 17px/1.1 var(--font-display);
+  color: var(--ink);
+  background: var(--gold);
+  border: 4px solid var(--ink);
+  border-radius: 999px;
+  padding: 8px 16px;
+  box-shadow: 0 5px 0 var(--ink);
+  cursor: pointer;
+  transition: transform .08s ease, box-shadow .08s ease;
+}
+.btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
+.btn--pink { background: var(--pink); color: #fff; }
+.btn--plain { background: var(--paper); }
+.btn svg { flex: none; }
+.top-actions { display: flex; align-items: center; gap: 8px; flex: none; }
+.btn--icon { position: relative; padding: 8px 11px; }
+.btn--icon.is-cloud::after {
+  content: ""; position: absolute; top: -6px; right: -6px; width: 15px; height: 15px;
+  border-radius: 50%; background: var(--mint); border: 3px solid var(--ink);
+}
+.btn:disabled { opacity: .5; cursor: default; box-shadow: 0 5px 0 var(--ink); }
+.btn:disabled:active { transform: none; }
+.count {
+  display: grid; place-items: center;
+  min-width: 26px; height: 26px; padding: 0 6px;
+  border-radius: 13px; border: 3px solid var(--ink);
+  background: var(--pink); color: #fff;
+  font: 800 13px/1 var(--font-display);
+}
+
+/* ---------- ads ---------- */
+.ad {
+  display: grid; place-content: center; justify-items: center; gap: 2px;
+  border: 3px dashed rgba(255,255,255,.75);
+  border-radius: 14px;
+  background: rgba(255,255,255,.16);
+  color: var(--ink);
+  font: 800 12px/1.2 var(--font-body);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  text-align: center;
+}
+.ad small { font-size: 11px; letter-spacing: .08em; opacity: .75; }
+.ad--rect { height: 250px; width: 100%; max-width: 300px; }
+
+/* ---------- counter ---------- */
+.counter { display: grid; justify-items: center; gap: 12px; }
+.pill {
+  background: var(--ink); color: #fff;
+  font: 800 13px/1 var(--font-display);
+  letter-spacing: .16em; text-transform: uppercase;
+  padding: 6px 16px 5px; border-radius: 999px;
+}
+.digits { display: flex; justify-content: center; gap: clamp(5px, 1.6vw, 8px); }
+.digit {
+  width: clamp(40px, 13.6vw, 66px);
+  height: clamp(58px, 17vw, 86px);
+  display: grid; place-items: center;
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 18px;
+  box-shadow: 0 7px 0 var(--ink), inset 0 -10px 0 var(--soft);
+  font: 800 clamp(34px, 11vw, 58px)/1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  padding-bottom: 6px;
+}
+.digit.dim { color: #aab8ea; }
+.digit.tick { animation: tick .22s ease-out; }
+@keyframes tick { 0% { transform: translateY(0) scale(1); } 40% { transform: translateY(-6px) scale(1.07); } 100% { transform: translateY(0) scale(1); } }
+
+/* ---------- stage ---------- */
+.stage { --egg-h: clamp(220px, min(42vh, 112vw), 400px); position: relative; height: var(--egg-h); display: grid; place-items: center; margin-block: 6px 10px; }
+.egg {
+  all: unset;
+  display: block;
+  height: var(--egg-h);
+  max-width: 100%;
+  aspect-ratio: 300 / 390;
+  -webkit-touch-callout: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.egg:focus-visible { outline: 3px solid var(--ink); outline-offset: 6px; border-radius: 40px; }
+.egg[aria-disabled="true"] { cursor: default; }
+.egg svg { display: block; width: 100%; height: 100%; overflow: visible; transform-origin: 50% 92%; }
+
+.crack { visibility: hidden; fill: none; stroke: var(--ink); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset .25s ease-out; }
+.cut { fill: none; stroke: var(--ink); stroke-width: 8; stroke-linejoin: round; }
+
+.half-top, .half-bot, .gift { transition: transform .8s cubic-bezier(.2, 1.3, .35, 1), opacity .6s ease; }
+.half-top { transform-origin: 150px 200px; }
+.half-bot { transform-origin: 150px 200px; }
+.gift { opacity: 0; transform: translateY(40px) scale(.5); transform-origin: 150px 200px; }
+.broken .half-top { transform: translate(-24px, -150px) rotate(-22deg); opacity: 0; transition: transform .7s ease-out, opacity .5s ease .25s; }
+.broken .half-bot { transform: translate(10px, 18px) rotate(5deg); }
+.broken .gift { opacity: 1; transform: translateY(-34px) scale(1.12); transition-delay: .12s; }
+.card-label { font: 800 14px var(--font-display); letter-spacing: .18em; fill: #fff; }
+.card-value { font: 800 52px var(--font-display); fill: #fff; stroke: var(--ink); stroke-width: 9px; paint-order: stroke fill; stroke-linejoin: round; }
+
+.fx { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+.float {
+  position: absolute; transform: translate(-50%, -50%);
+  font: 800 30px/1 var(--font-display); color: #fff;
+  -webkit-text-stroke: 6px var(--ink); paint-order: stroke fill;
+}
+.float--x2 { color: #ffd3ec; }
+.shard {
+  position: absolute; width: 11px; height: 8px;
+  background: var(--gold); border: 2px solid var(--ink); border-radius: 3px;
+  transform: translate(-50%, -50%);
+}
+.hint {
+  position: absolute; left: 50%; bottom: -20px; transform: translateX(-50%);
+  background: var(--paper); border: 4px solid var(--ink); border-radius: 999px;
+  box-shadow: 0 4px 0 var(--ink);
+  padding: 6px 16px; font: 800 16px/1 var(--font-display); white-space: nowrap;
+  pointer-events: none; z-index: 3;
+  animation: bob 1.1s ease-in-out infinite;
+}
+.hint.off { display: none; }
+.lock {
+  position: absolute; left: 50%; top: 44%; transform: translate(-50%, -50%); z-index: 5;
+  max-width: 92%; text-align: center; pointer-events: none;
+  background: var(--pink); color: #fff;
+  border: 4px solid var(--ink); border-radius: 18px; box-shadow: 0 5px 0 var(--ink);
+  padding: 10px 16px; font: 800 18px/1.15 var(--font-display);
+}
+.egg.locked svg { filter: grayscale(.8) brightness(.92); }
+@keyframes bob { 50% { transform: translateX(-50%) translateY(-5px); } }
+.again { position: absolute; left: 50%; bottom: -8px; transform: translateX(-50%); z-index: 4; white-space: nowrap; }
+.again:active { transform: translateX(-50%) translateY(4px); }
+
+/* ---------- bonus ---------- */
+.bonus-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; margin-top: 4px; }
+.bonus-col { display: grid; gap: 10px; min-width: 0; }
+.bonus {
+  all: unset;
+  box-sizing: border-box;
+  display: grid; gap: 2px; justify-items: center;
+  padding: 10px 12px 9px;
+  border: 4px solid var(--ink); border-radius: 18px;
+  background: #cfe3ff; color: var(--ink);
+  box-shadow: 0 5px 0 var(--ink);
+  cursor: pointer; text-align: center;
+  transition: transform .08s ease, box-shadow .08s ease, background .2s;
+}
+.bonus:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.bonus:disabled { cursor: default; }
+.bonus-title { font: 800 clamp(20px, 5.6vw, 26px)/1 var(--font-display); letter-spacing: .02em; }
+.bonus-sub { font: 800 12px/1 var(--font-body); letter-spacing: .08em; text-transform: uppercase; opacity: .8; }
+.bonus.is-ready { background: var(--pink); color: #fff; animation: pulse 1s ease-in-out infinite; }
+.bonus.is-ready:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); animation: none; }
+.bonus.is-active { background: var(--mint); color: var(--ink); }
+@keyframes pulse { 50% { transform: scale(1.04); } }
+
+.bar { height: 18px; border: 4px solid var(--ink); border-radius: 10px; background: #0a2f95; overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: var(--mint); border-right: 3px solid var(--ink); transition: width .15s linear; }
+.bar i:empty { min-width: 0; }
+.bar--ad { width: 100%; }
+.bar--ad i { transition: width linear; }
+
+.power {
+  width: 84px; height: 84px; border-radius: 50%;
+  display: grid; place-content: center; justify-items: center;
+  background: radial-gradient(circle at 35% 30%, #ffe27a, var(--gold) 55%, var(--gold-deep));
+  border: 4px solid var(--ink); box-shadow: 0 5px 0 var(--ink);
+  transition: background .2s;
+}
+.power strong { font: 800 34px/.9 var(--font-display); }
+.power span { font: 800 11px/1 var(--font-body); letter-spacing: .14em; text-transform: uppercase; }
+.power.is-x2 { background: radial-gradient(circle at 35% 30%, #ff9ad0, var(--pink) 60%, #d61f84); color: #fff; }
+
+/* ---------- gift card chip ---------- */
+.gc {
+  display: grid; place-content: center; justify-items: center; gap: 0;
+  width: 74px; height: 48px; flex: none;
+  background: linear-gradient(135deg, #ff6bbd, #d61f84);
+  border: 3px solid var(--ink); border-radius: 10px;
+  color: #fff;
+}
+.gc small { font: 800 8px/1 var(--font-body); letter-spacing: .14em; text-transform: uppercase; opacity: .95; }
+.gc strong { font: 800 22px/1 var(--font-display); text-shadow: 0 2px 0 rgba(20,25,77,.5); }
+.gc--big { width: 170px; height: 108px; border-width: 5px; border-radius: 18px; box-shadow: 0 6px 0 var(--ink); }
+.gc--big small { font-size: 12px; }
+.gc--big strong { font-size: 52px; }
+
+/* ---------- modals ---------- */
+.modal {
+  position: fixed; inset: 0; z-index: 50;
+  display: grid; place-items: center;
+  padding: max(20px, env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px)) max(20px, env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px));
+  background: rgba(10, 18, 80, .66);
+}
+.sheet {
+  width: min(100%, 400px); max-height: 100%; overflow-y: auto;
+  display: grid; gap: 16px; justify-items: center; text-align: center;
+  padding: 24px 20px 22px;
+  background: var(--paper);
+  border: 4px solid var(--ink); border-radius: 26px;
+  box-shadow: 0 8px 0 var(--ink);
+  animation: pop .35s cubic-bezier(.2, 1.4, .4, 1);
+}
+@keyframes pop { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.sheet h2 { margin: 0; font: 800 clamp(28px, 8vw, 34px)/1 var(--font-display); text-wrap: balance; }
+.sheet p { margin: 0; color: var(--muted); font-weight: 800; }
+.sheet .actions { display: grid; gap: 12px; width: 100%; padding-bottom: 6px; }
+.sheet .actions .btn { width: 100%; }
+
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; width: 100%; max-height: 38vh; overflow-y: auto; padding-bottom: 4px; }
+.list li {
+  display: flex; align-items: center; gap: 12px; text-align: left;
+  padding: 10px 12px; border: 3px solid var(--ink); border-radius: 16px; background: #f1f6ff;
+}
+.list .meta { min-width: 0; flex: 1; display: grid; gap: 2px; }
+.list .meta strong { font: 800 18px/1.1 var(--font-display); }
+.list .meta span { font-size: 13px; color: var(--muted); font-weight: 800; }
+.btn--small { font-size: 14px; padding: 6px 12px; box-shadow: 0 3px 0 var(--ink); text-decoration: none; }
+.acct { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 10px 12px; border: 3px solid var(--ink); border-radius: 16px; background: #f1f6ff; }
+.avatar { flex: none; width: 52px; height: 52px; border-radius: 50%; border: 3px solid var(--ink); background: var(--gold); display: grid; place-items: center; overflow: hidden; font: 800 24px/1 var(--font-display); }
+.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.acct-text { min-width: 0; display: grid; gap: 2px; }
+.acct-text strong { font: 800 20px/1.1 var(--font-display); overflow-wrap: anywhere; }
+.acct-text span { font-size: 13px; line-height: 1.25; color: var(--muted); font-weight: 800; }
+.sheet a.link { color: var(--sky-2); font: 800 16px/1.2 var(--font-display); }
+.stats { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.chip { border: 3px solid var(--ink); border-radius: 999px; padding: 4px 12px; font: 800 15px/1.1 var(--font-display); background: var(--gold); }
+.label { font: 800 12px/1 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+
+#confetti { position: fixed; inset: 0; z-index: 60; pointer-events: none; overflow: hidden; }
+#confetti i { position: absolute; width: 10px; height: 14px; border: 2px solid var(--ink); border-radius: 3px; }
+
+/* ---------- small screens ---------- */
+@media (max-width: 359px) {
+  .btn { padding-inline: 12px; font-size: 16px; }
+  .top .lbl { display: none; }
+  .btn--icon { padding-inline: 11px; }
+  .power { width: 72px; height: 72px; }
+  .power strong { font-size: 28px; }
+}
+@media (max-height: 560px) {
+  .ad--rect { height: 120px; }
+  .sheet { gap: 10px; padding: 16px; }
+  .sheet h2 { font-size: 26px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::after, .hint, .bonus.is-ready, .digit.tick, .sheet { animation: none; }
+  .half-top, .half-bot, .gift, .crack { transition-duration: .01s; transition-delay: 0s; }
+}
+</style>
+
+<div class="shell">
+
+  <main class="play">
+    <header class="top">
+      <h1 class="brand">Egg Crack</h1>
+      <div class="top-actions">
+        <button class="btn" id="openRewards" type="button" aria-label="Rewards">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="10" width="18" height="11" rx="2"/><path d="M12 10v11M3 14h18M12 10C9 3 5 6 8 10M12 10c3-7 7-4 4 0"/></svg>
+          <span class="lbl">Rewards</span>
+          <b class="count" id="rewardCount" hidden>0</b>
+        </button>
+        <button class="btn btn--icon btn--plain" id="openMenu" type="button" aria-label="Menu and login">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </header>
+
+
+    <section class="counter" aria-label="Taps left">
+      <div class="pill">Taps left</div>
+      <div class="digits" id="digits"></div>
+    </section>
+
+    <section class="stage" id="stage">
+      <button class="egg" id="egg" type="button" aria-label="Tap the egg to crack it">
+        <svg id="eggSvg" viewBox="0 0 300 390" aria-hidden="true">
+          <defs>
+            <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#fff2a8"/>
+              <stop offset=".45" stop-color="#ffc62e"/>
+              <stop offset="1" stop-color="#f29a00"/>
+            </linearGradient>
+            <linearGradient id="cardGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#ff6bbd"/>
+              <stop offset="1" stop-color="#d61f84"/>
+            </linearGradient>
+            <path id="eggShape" d="M150 18C84 18 32 138 32 226c0 80 52 136 118 136s118-56 118-136C268 138 216 18 150 18Z"/>
+            <clipPath id="clipEgg"><use href="#eggShape"/></clipPath>
+            <clipPath id="clipTop"><polygon points="-60,-60 360,-60 360,196 290,196 262,210 236,186 208,212 180,188 152,214 124,188 96,212 68,186 40,210 12,194 -60,194"/></clipPath>
+            <clipPath id="clipBot"><polygon points="-60,194 12,194 40,210 68,186 96,212 124,188 152,214 180,188 208,212 236,186 262,210 290,196 360,196 360,500 -60,500"/></clipPath>
+            <g id="eggArt">
+              <use href="#eggShape" fill="url(#gold)" stroke="#14194d" stroke-width="8" stroke-linejoin="round"/>
+              <path d="M236 150C256 190 262 232 250 280C240 320 210 346 170 354C222 330 246 282 242 222C240 192 238 168 230 140Z" fill="#d98200" opacity=".35"/>
+              <path d="M82 150C92 108 116 74 142 58" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round" opacity=".9"/>
+              <circle cx="72" cy="182" r="7" fill="#fff" opacity=".9"/>
+            </g>
+          </defs>
+
+          <ellipse cx="150" cy="372" rx="104" ry="12" fill="#0a1c78" opacity=".35"/>
+
+          <g class="gift">
+            <rect x="70" y="126" width="160" height="104" rx="16" fill="url(#cardGrad)" stroke="#14194d" stroke-width="7"/>
+            <rect x="73" y="140" width="154" height="16" fill="#14194d" opacity=".18"/>
+            <text class="card-label" x="150" y="152" text-anchor="middle">GIFT CARD</text>
+            <text class="card-value" id="cardValue" x="150" y="210" text-anchor="middle">$10</text>
+          </g>
+
+          <g id="intact">
+            <use href="#eggArt"/>
+            <g clip-path="url(#clipEgg)">
+              <path class="crack" pathLength="1" data-s=".02" data-e=".30" d="M150 40L138 78L158 104L140 138L160 168"/>
+              <path class="crack" pathLength="1" data-s=".25" data-e=".50" d="M160 168L188 186L176 214L210 232L204 262"/>
+              <path class="crack" pathLength="1" data-s=".30" data-e=".55" d="M140 138L108 150L112 182L80 204"/>
+              <path class="crack" pathLength="1" data-s=".40" data-e=".70" d="M150 354L162 318L140 290L160 262L134 238L148 214"/>
+              <path class="crack" pathLength="1" data-s=".55" data-e=".80" d="M204 262L236 280L246 318"/>
+              <path class="crack" pathLength="1" data-s=".65" data-e=".90" d="M80 204L62 236L78 262L60 296"/>
+              <path class="crack" pathLength="1" data-s=".80" data-e=".97" d="M176 214L150 214L128 238"/>
+            </g>
+          </g>
+
+          <g id="halves" hidden>
+            <g class="half-bot">
+              <g clip-path="url(#clipBot)"><use href="#eggArt"/></g>
+              <polyline class="cut" clip-path="url(#clipEgg)" points="-20,194 12,194 40,210 68,186 96,212 124,188 152,214 180,188 208,212 236,186 262,210 290,196 320,196"/>
+            </g>
+            <g class="half-top">
+              <g clip-path="url(#clipTop)"><use href="#eggArt"/></g>
+              <polyline class="cut" clip-path="url(#clipEgg)" points="-20,194 12,194 40,210 68,186 96,212 124,188 152,214 180,188 208,212 236,186 262,210 290,196 320,196"/>
+            </g>
+          </g>
+        </svg>
+      </button>
+      <div class="fx" id="fx"></div>
+      <div class="lock" id="lock" hidden role="status" aria-live="polite"></div>
+      <div class="hint" id="hint">Tap the egg!</div>
+      <button class="btn btn--pink again" id="again" type="button" hidden>Crack another egg</button>
+    </section>
+
+    <section class="bonus-row" aria-label="Bonus">
+      <div class="bonus-col">
+        <!-- Bonus x2 slot. Charges as you tap. Tapping it plays an ad break, then doubles each tap for a short time. -->
+        <button class="bonus" id="bonus" type="button" disabled>
+          <span class="bonus-title" id="bonusTitle">BONUS X2</span>
+          <span class="bonus-sub" id="bonusSub">Charging 0/50</span>
+        </button>
+        <div class="bar" aria-hidden="true"><i id="barFill"></i></div>
+      </div>
+      <div class="power" id="power" aria-live="polite"><strong id="mult">x1</strong><span>Power</span></div>
+    </section>
+
+  </main>
+
+</div>
+
+<div class="modal" id="winModal" hidden role="dialog" aria-modal="true" aria-labelledby="winTitle">
+  <div class="sheet">
+    <h2 id="winTitle">You cracked it!</h2>
+    <div class="gc gc--big"><small>Gift card</small><strong id="winValue">$10</strong></div>
+    <p id="winText">Your gift card is waiting in Rewards.</p>
+    <div class="actions">
+      <button class="btn" id="winRewards" type="button">View rewards</button>
+      <button class="btn btn--pink" id="winAgain" type="button">Crack another egg</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="adModal" hidden role="dialog" aria-modal="true" aria-labelledby="adTitle">
+  <div class="sheet">
+    <h2 id="adTitle">Quick ad, then x2</h2>
+    <!-- Ad slot: boost ad break (300 x 250). Replace the contents with your ad tag,
+         or call your ad network's rewarded-ad function inside showRewardedAd() in the script. -->
+    <div class="ad ad--rect" data-slot="boost-ad"><span>Ad space</span><small>300 × 250</small></div>
+    <div class="bar bar--ad" aria-hidden="true"><i id="adFill"></i></div>
+    <p id="adCount">Boost unlocks in 5s</p>
+    <div class="actions">
+      <button class="btn btn--pink" id="adGo" type="button" disabled>Start x2 boost</button>
+      <button class="btn btn--plain" id="adCancel" type="button">Maybe later</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="menuModal" hidden role="dialog" aria-modal="true" aria-labelledby="menuTitle">
+  <div class="sheet">
+    <h2 id="menuTitle">Menu</h2>
+    <div class="acct">
+      <div class="avatar" id="avatar" aria-hidden="true">G</div>
+      <div class="acct-text"><strong id="acctName">Guest</strong><span id="acctNote">Progress saves in this browser only.</span></div>
+    </div>
+    <p id="loginNote" hidden></p>
+    <a class="link" id="loginLink" href="https://claude.ai/login" target="_blank" rel="noopener" hidden>Sign in to Claude</a>
+    <div class="stats" id="menuStats"></div>
+    <div class="actions">
+      <button class="btn btn--pink" id="loginBtn" type="button">Log in to save online</button>
+      <button class="btn" id="menuRewards" type="button">My rewards</button>
+      <button class="btn btn--plain" id="closeMenu" type="button">Back to the egg</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="rewardsModal" hidden role="dialog" aria-modal="true" aria-labelledby="rewardsTitle">
+  <div class="sheet">
+    <h2 id="rewardsTitle">Your rewards</h2>
+    <div class="stats" id="stats"></div>
+    <p id="emptyRewards">No gift cards yet. Crack your first egg to win one.</p>
+    <ul class="list" id="rewardList"></ul>
+    <div class="label">Prizes inside every egg</div>
+    <div class="stats" id="prizeChips"></div>
+    <div class="actions"><button class="btn btn--plain" id="closeRewards" type="button">Back to the egg</button></div>
+  </div>
+</div>
+
+<div id="confetti" aria-hidden="true"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  // Settings you can change.
+  var CONFIG = {
+    taps: 51897,        // taps needed to break one egg (every new player starts here)
+    chargeTaps: 50,     // taps needed to charge the x2 bonus
+    bonusSeconds: 15,   // how long x2 lasts
+    adSeconds: 5,       // length of the ad break before the boost starts
+    claimUrl: "",       // optional: page where winners claim a card; shows a Claim button when set
+    prizes: [           // gift card values and how likely each is
+      { value: 5, weight: 60 },
+      { value: 10, weight: 30 },
+      { value: 25, weight: 10 }
+    ]
+  };
+
+  var KEY = "crack-the-egg-v1";
+  var $ = function (id) { return document.getElementById(id); };
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var egg = $("egg"), svg = $("eggSvg"), stage = $("stage"), fx = $("fx");
+  var intact = $("intact"), halves = $("halves"), cardValue = $("cardValue");
+  var hint = $("hint"), again = $("again");
+  var bonusBtn = $("bonus"), bonusTitle = $("bonusTitle"), bonusSub = $("bonusSub"), barFill = $("barFill");
+  var power = $("power"), mult = $("mult");
+  var cracks = Array.prototype.slice.call(document.querySelectorAll(".crack"));
+
+  var state = { remaining: CONFIG.taps, charge: 0, rewards: [], eggs: 0, broken: false };
+  var bonusUntil = 0, bonusTimer = null, saveTick = 0, lastFocus = null;
+
+  // ----- storage (per browser, optional) -----
+  // Saved progress carries a checksum, so progress edited by hand is thrown away on load.
+  function sign(o) {
+    var rw = Array.isArray(o.rewards) ? o.rewards.map(function (r) { return r && (r.value + "@" + r.at); }).join(",") : "";
+    var str = "ce7f3a91|" + o.total + "|" + o.remaining + "|" + o.charge + "|" + o.eggs + "|" + rw;
+    var h = 2166136261;
+    for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return (h >>> 0).toString(16);
+  }
+  try {
+    var saved = JSON.parse(localStorage.getItem(KEY) || "null");
+    if (saved && saved.total === CONFIG.taps && saved.sig === sign(saved)) {
+      if (Number.isInteger(saved.remaining) && saved.remaining > 0 && saved.remaining <= CONFIG.taps) state.remaining = saved.remaining;
+      if (Number.isInteger(saved.charge) && saved.charge >= 0) state.charge = Math.min(saved.charge, CONFIG.chargeTaps);
+      if (Number.isInteger(saved.eggs) && saved.eggs >= 0) state.eggs = saved.eggs;
+      if (Array.isArray(saved.rewards)) {
+        state.rewards = saved.rewards.filter(function (r) { return r && Number.isFinite(r.value) && Number.isFinite(r.at); }).slice(0, 200);
+      }
+    }
+  } catch (e) {}
+  function snapNow() { return { total: CONFIG.taps, remaining: state.remaining, charge: state.charge, eggs: state.eggs, rewards: state.rewards }; }
+  // Saves in this browser, and to the player's account too when they are logged in.
+  function save(now) {
+    try {
+      var o = snapNow();
+      o.sig = sign(o);
+      localStorage.setItem(KEY, JSON.stringify(o));
+    } catch (e) {}
+    cloudQueue(!!now);
+  }
+  var fresh = state.remaining === CONFIG.taps && state.eggs === 0;   // true until the first tap is saved
+
+  // ----- counter -----
+  var digitsEl = $("digits"), digitEls = [];
+  for (var i = 0; i < 6; i++) {
+    var d = document.createElement("span");
+    d.className = "digit";
+    digitsEl.appendChild(d);
+    digitEls.push(d);
+  }
+
+  function render() {
+    var str = String(state.remaining).padStart(6, "0");
+    var lead = true;
+    digitEls.forEach(function (el, i) {
+      var ch = str.charAt(i);
+      var isLead = lead && ch === "0" && i < 5;
+      if (ch !== "0") lead = false;
+      el.classList.toggle("dim", isLead);
+      if (el.textContent !== ch) {
+        el.textContent = ch;
+        if (!reduce) { el.classList.remove("tick"); void el.offsetWidth; el.classList.add("tick"); }
+      }
+    });
+    digitsEl.setAttribute("aria-label", state.remaining + " taps left");
+    var p = 1 - state.remaining / CONFIG.taps;
+    cracks.forEach(function (c) {
+      var s = parseFloat(c.dataset.s), e = parseFloat(c.dataset.e);
+      var t = Math.max(0, Math.min(1, (p - s) / (e - s)));
+      c.style.strokeDashoffset = String(1 - t);
+      c.style.visibility = t > 0 ? "visible" : "hidden";
+    });
+  }
+
+  // ----- bonus -----
+  function bonusActive() { return Date.now() < bonusUntil; }
+
+  function renderBonus() {
+    var now = Date.now();
+    var active = now < bonusUntil;
+    var ready = !active && !state.broken && state.charge >= CONFIG.chargeTaps;
+    var pct, sub;
+    if (active) {
+      var left = bonusUntil - now;
+      pct = (left / (CONFIG.bonusSeconds * 1000)) * 100;
+      sub = Math.ceil(left / 1000) + "s left";
+    } else if (ready) {
+      pct = 100; sub = "Watch an ad for x2";
+    } else {
+      pct = (state.charge / CONFIG.chargeTaps) * 100;
+      sub = "Charging " + state.charge + "/" + CONFIG.chargeTaps;
+    }
+    bonusBtn.disabled = !ready;
+    bonusBtn.classList.toggle("is-ready", ready);
+    bonusBtn.classList.toggle("is-active", active);
+    bonusTitle.textContent = active ? "X2 ACTIVE" : "BONUS X2";
+    bonusSub.textContent = sub;
+    barFill.style.width = Math.max(0, Math.min(100, pct)) + "%";
+    barFill.style.borderRightWidth = pct > 0 ? "" : "0";
+    mult.textContent = active ? "x2" : "x1";
+    power.classList.toggle("is-x2", active);
+  }
+
+  function activateBonus() {
+    if (state.broken || bonusActive() || state.charge < CONFIG.chargeTaps) return;
+    state.charge = 0;
+    bonusUntil = Date.now() + CONFIG.bonusSeconds * 1000;
+    clearInterval(bonusTimer);
+    bonusTimer = setInterval(function () {
+      if (!bonusActive()) endBonus(); else renderBonus();
+    }, 100);
+    renderBonus();
+  }
+  function endBonus() {
+    bonusUntil = 0;
+    clearInterval(bonusTimer);
+    bonusTimer = null;
+    renderBonus();
+  }
+  bonusBtn.addEventListener("click", function () {
+    if (state.broken || bonusActive() || state.charge < CONFIG.chargeTaps) return;
+    showRewardedAd(activateBonus);
+  });
+
+  // ----- tapping -----
+  function tap(e) {
+    if (state.broken) return;
+    var active = bonusActive();
+    var dec = Math.min(active ? 2 : 1, state.remaining);
+    state.remaining -= dec;
+    if (!active) state.charge = Math.min(CONFIG.chargeTaps, state.charge + 1);
+    hint.classList.add("off");
+    if (fresh) { fresh = false; save(); }   // the first tap is saved straight away
+    hit(e, dec, active);
+    render();
+    renderBonus();
+    if (state.remaining <= 0) breakEgg();
+    else if (++saveTick % 10 === 0) save();
+  }
+
+  // ----- tap guard -----
+  // One press at a time, real (trusted) input only, and a speed limit.
+  // Fast, metronome-regular or instant (0 ms) presses count as an auto clicker and lock the egg.
+  // This runs in the browser, so it slows auto clickers down but cannot stop every one.
+  var MIN_GAP = 90;      // ms between taps (about 11 a second at most)
+  var MIN_HOLD = 10;     // ms a press must last; auto clickers release almost instantly
+  var G = { id: null, downAt: 0, last: 0, gaps: [], holds: [], blocked: 0, strikes: 0, lastStrike: 0, until: 0, timer: null };
+  var lockEl = $("lock");
+
+  function mean(a) { return a.reduce(function (x, y) { return x + y; }, 0) / a.length; }
+  function stdev(a) { var m = mean(a); return Math.sqrt(mean(a.map(function (v) { return (v - m) * (v - m); }))); }
+  function locked() { return performance.now() < G.until; }
+
+  function strike() {
+    var now = performance.now();
+    if (now - G.lastStrike > 300000) G.strikes = 0;
+    G.lastStrike = now;
+    G.strikes += 1;
+    var secs = [10, 30, 90][Math.min(G.strikes, 3) - 1];
+    G.until = now + secs * 1000;
+    G.gaps = []; G.holds = []; G.blocked = 0; G.last = 0; G.id = null;
+    egg.classList.add("locked");
+    clearInterval(G.timer);
+    function tick() {
+      var left = Math.ceil((G.until - performance.now()) / 1000);
+      if (left <= 0) {
+        clearInterval(G.timer);
+        lockEl.hidden = true;
+        egg.classList.remove("locked");
+        return;
+      }
+      lockEl.textContent = "Too fast! Try again in " + left + "s";
+      lockEl.hidden = false;
+    }
+    tick();
+    G.timer = setInterval(tick, 250);
+  }
+
+  // true when the tap looks like a person
+  function accept(t, hold) {
+    if (document.hidden || state.broken || locked()) return false;
+    var gap = G.last ? t - G.last : Infinity;
+    if (gap < MIN_GAP) { if (++G.blocked >= 6) strike(); return false; }
+    G.blocked = 0;
+    G.last = t;
+    if (gap < 1500) { G.gaps.push(gap); if (G.gaps.length > 14) G.gaps.shift(); } else G.gaps = [];
+    if (hold !== null) { G.holds.push(hold); if (G.holds.length > 14) G.holds.shift(); } else G.holds = [];
+    if (G.gaps.length >= 12 && mean(G.gaps) < 450 && stdev(G.gaps) < 8) { strike(); return false; }
+    if (G.holds.length >= 12 && stdev(G.holds) < 1.5) { strike(); return false; }
+    return true;
+  }
+
+  egg.addEventListener("pointerdown", function (e) {
+    if (!e.isTrusted || !e.isPrimary) return;                       // real input, first finger only
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    if (G.id !== null) return;                                       // one press at a time
+    G.id = e.pointerId;
+    G.downAt = e.timeStamp;
+    try { egg.setPointerCapture(e.pointerId); } catch (x) {}
+  });
+  egg.addEventListener("pointerup", function (e) {
+    if (e.pointerId !== G.id) return;
+    G.id = null;
+    if (!e.isTrusted) return;
+    var r = egg.getBoundingClientRect();
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) return;  // dragged off the egg
+    var hold = e.timeStamp - G.downAt;
+    if (hold > 1500) return;                                         // long press, not a tap
+    if (hold < MIN_HOLD) { if (++G.blocked >= 6) strike(); return; }
+    if (accept(e.timeStamp, hold)) tap(e);
+  });
+  function dropPress(e) { if (e.pointerId === G.id) G.id = null; }
+  egg.addEventListener("pointercancel", dropPress);
+  egg.addEventListener("lostpointercapture", dropPress);
+  window.addEventListener("blur", function () { G.id = null; });
+  document.addEventListener("visibilitychange", function () { G.id = null; });
+  egg.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+  egg.addEventListener("dragstart", function (e) { e.preventDefault(); });
+
+  egg.addEventListener("keydown", function (e) {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    e.preventDefault();
+    if (e.repeat || !e.isTrusted) return;                            // holding a key does not count
+    if (accept(e.timeStamp, null)) tap(null);
+  });
+
+  function hit(e, dec, active) {
+    var p = 1 - state.remaining / CONFIG.taps;
+    var a = 3 + p * 5;
+    if (!reduce) {
+      svg.animate([
+        { transform: "rotate(0deg) scale(1,1)" },
+        { transform: "rotate(" + (-a) + "deg) scale(.96,1.04)" },
+        { transform: "rotate(" + (a * 0.8) + "deg) scale(1.03,.97)" },
+        { transform: "rotate(0deg) scale(1,1)" }
+      ], { duration: 240, easing: "ease-out" });
+    }
+    if (fx.children.length > 40) return;
+    var r = stage.getBoundingClientRect();
+    var x = r.width / 2, y = r.height * 0.45;
+    if (e && typeof e.clientX === "number") { x = e.clientX - r.left; y = e.clientY - r.top; }
+
+    var t = document.createElement("span");
+    t.className = "float" + (active ? " float--x2" : "");
+    t.textContent = "-" + dec;
+    t.style.left = x + "px"; t.style.top = y + "px";
+    fx.appendChild(t);
+    if (reduce) { setTimeout(function () { t.remove(); }, 400); return; }
+    t.animate([
+      { transform: "translate(-50%,-50%) scale(.6)", opacity: 1 },
+      { transform: "translate(-50%,-120%) scale(1.1)", opacity: 1, offset: 0.3 },
+      { transform: "translate(-50%,-260%) scale(1)", opacity: 0 }
+    ], { duration: 700, easing: "ease-out" }).onfinish = function () { t.remove(); };
+
+    for (var i = 0; i < 4; i++) {
+      var s = document.createElement("span");
+      s.className = "shard";
+      s.style.left = x + "px"; s.style.top = y + "px";
+      fx.appendChild(s);
+      var dx = (Math.random() - 0.5) * 120, dy = -20 - Math.random() * 40, rot = (Math.random() - 0.5) * 360;
+      s.animate([
+        { transform: "translate(-50%,-50%) rotate(0deg)", opacity: 1 },
+        { transform: "translate(" + dx + "px," + dy + "px) rotate(" + rot + "deg)", opacity: 1, offset: 0.45 },
+        { transform: "translate(" + dx * 1.25 + "px," + (dy + 80) + "px) rotate(" + rot * 2 + "deg)", opacity: 0 }
+      ], { duration: 520, easing: "ease-out" }).onfinish = (function (el) { return function () { el.remove(); }; })(s);
+    }
+  }
+
+  // ----- win -----
+  function pickPrize() {
+    var total = CONFIG.prizes.reduce(function (a, p) { return a + p.weight; }, 0);
+    var r = Math.random() * total;
+    for (var i = 0; i < CONFIG.prizes.length; i++) {
+      r -= CONFIG.prizes[i].weight;
+      if (r < 0) return CONFIG.prizes[i].value;
+    }
+    return CONFIG.prizes[0].value;
+  }
+
+  function breakEgg() {
+    state.broken = true;
+    state.eggs += 1;
+    var value = pickPrize();
+    state.rewards.unshift({ id: Date.now(), value: value, at: Date.now() });
+    save(true);
+    renderRewards();
+    cardValue.textContent = "$" + value;
+    egg.setAttribute("aria-disabled", "true");
+    endBonus();
+    intact.hidden = true;
+    halves.hidden = false;
+    void halves.getBoundingClientRect();
+    svg.classList.add("broken");
+    burst();
+    setTimeout(function () { if (state.broken) openWin(value); }, reduce ? 200 : 1300);
+  }
+
+  function newEgg() {
+    state.remaining = CONFIG.taps;
+    state.charge = 0;
+    state.broken = false;
+    endBonus();
+    svg.classList.remove("broken");
+    halves.hidden = true;
+    intact.hidden = false;
+    again.hidden = true;
+    egg.removeAttribute("aria-disabled");
+    hint.classList.remove("off");
+    save();
+    render();
+    renderBonus();
+  }
+  again.addEventListener("click", newEgg);
+
+  function burst() {
+    if (reduce) return;
+    var layer = $("confetti");
+    var r = stage.getBoundingClientRect();
+    var cx = r.left + r.width / 2, cy = r.top + r.height * 0.45;
+    var colors = ["#ffc62e", "#ff3fa0", "#3ff0b0", "#ffffff", "#7b61ff"];
+    for (var i = 0; i < 48; i++) {
+      var c = document.createElement("i");
+      c.style.left = cx + "px"; c.style.top = cy + "px";
+      c.style.background = colors[i % colors.length];
+      layer.appendChild(c);
+      var ang = Math.random() * Math.PI * 2, dist = 90 + Math.random() * 220;
+      var dx = Math.cos(ang) * dist, dy = Math.sin(ang) * dist - 80, rot = (Math.random() - 0.5) * 900;
+      c.animate([
+        { transform: "translate(0,0) rotate(0deg)", opacity: 1 },
+        { transform: "translate(" + dx + "px," + dy + "px) rotate(" + rot / 2 + "deg)", opacity: 1, offset: 0.5 },
+        { transform: "translate(" + dx * 1.15 + "px," + (dy + 260) + "px) rotate(" + rot + "deg)", opacity: 0 }
+      ], { duration: 1500 + Math.random() * 700, easing: "ease-out" }).onfinish = (function (el) { return function () { el.remove(); }; })(c);
+    }
+  }
+
+  // ----- modals -----
+  function openModal(m) {
+    lastFocus = document.activeElement;
+    m.hidden = false;
+    var b = m.querySelector("button");
+    if (b) b.focus();
+  }
+  function closeModal(m) {
+    m.hidden = true;
+    if (lastFocus && lastFocus.focus && document.contains(lastFocus) && !lastFocus.hidden) lastFocus.focus();
+  }
+  var winModal = $("winModal"), rewardsModal = $("rewardsModal"), adModal = $("adModal"), menuModal = $("menuModal");
+
+  // ----- ad break before the boost -----
+  // This placeholder counts down while the ad slot shows. To use a real rewarded ad,
+  // call your ad network here and run onReward() when it reports the ad was watched.
+  var adTimer = null, adReward = null;
+  var adGo = $("adGo"), adCount = $("adCount"), adFill = $("adFill");
+  function showRewardedAd(onReward) {
+    adReward = onReward;
+    var left = CONFIG.adSeconds;
+    adGo.disabled = true;
+    adCount.textContent = "Boost unlocks in " + left + "s";
+    adFill.style.transition = "none";
+    adFill.style.width = "0%";
+    openModal(adModal);
+    void adFill.offsetWidth;
+    adFill.style.transition = "width " + CONFIG.adSeconds + "s linear";
+    adFill.style.width = "100%";
+    clearInterval(adTimer);
+    adTimer = setInterval(function () {
+      left -= 1;
+      if (left > 0) { adCount.textContent = "Boost unlocks in " + left + "s"; return; }
+      clearInterval(adTimer);
+      adCount.textContent = "Thanks for watching!";
+      adGo.disabled = false;
+      adGo.focus();
+    }, 1000);
+  }
+  function cancelAd() {
+    clearInterval(adTimer);
+    adReward = null;
+    closeModal(adModal);
+  }
+  adGo.addEventListener("click", function () {
+    var done = adReward;
+    cancelAd();
+    if (done) done();
+  });
+  $("adCancel").addEventListener("click", cancelAd);
+
+  function openWin(value) {
+    $("winValue").textContent = "$" + value;
+    $("winText").textContent = "Your $" + value + " gift card is waiting in Rewards.";
+    openModal(winModal);
+    again.hidden = false;
+  }
+  $("winAgain").addEventListener("click", function () { closeModal(winModal); newEgg(); });
+  $("winRewards").addEventListener("click", function () { winModal.hidden = true; openModal(rewardsModal); });
+  $("openRewards").addEventListener("click", function () { renderRewards(); openModal(rewardsModal); });
+  $("closeRewards").addEventListener("click", function () { closeModal(rewardsModal); });
+  [winModal, rewardsModal, menuModal].forEach(function (m) {
+    m.addEventListener("pointerdown", function (e) {
+      if (e.target === m) { m.hidden = true; if (m === winModal) again.hidden = false; }
+    });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    if (!adModal.hidden) cancelAd();
+    else if (!rewardsModal.hidden) closeModal(rewardsModal);
+    else if (!menuModal.hidden) closeModal(menuModal);
+    else if (!winModal.hidden) closeModal(winModal);
+  });
+
+  // ----- rewards list -----
+  function renderRewards() {
+    var count = $("rewardCount");
+    count.textContent = state.rewards.length;
+    count.hidden = state.rewards.length === 0;
+    $("emptyRewards").hidden = state.rewards.length > 0;
+
+    var list = $("rewardList");
+    list.replaceChildren();
+    list.hidden = state.rewards.length === 0;
+    state.rewards.forEach(function (r) {
+      var li = document.createElement("li");
+      var chip = document.createElement("div");
+      chip.className = "gc";
+      var sm = document.createElement("small"); sm.textContent = "Gift card";
+      var st = document.createElement("strong"); st.textContent = "$" + r.value;
+      chip.append(sm, st);
+      var meta = document.createElement("div");
+      meta.className = "meta";
+      var t = document.createElement("strong"); t.textContent = "$" + r.value + " Gift Card";
+      var dt = document.createElement("span");
+      dt.textContent = "Won " + new Date(r.at).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+      meta.append(t, dt);
+      li.append(chip, meta);
+      if (CONFIG.claimUrl) {
+        var a = document.createElement("a");
+        a.className = "btn btn--small"; a.textContent = "Claim";
+        a.href = CONFIG.claimUrl; a.target = "_blank"; a.rel = "noopener";
+        li.appendChild(a);
+      }
+      list.appendChild(li);
+    });
+
+    var stats = $("stats");
+    stats.replaceChildren();
+    var c1 = document.createElement("span");
+    c1.className = "chip";
+    c1.textContent = state.eggs + (state.eggs === 1 ? " egg cracked" : " eggs cracked");
+    stats.appendChild(c1);
+
+    var chips = $("prizeChips");
+    chips.replaceChildren();
+    CONFIG.prizes.forEach(function (p) {
+      var c = document.createElement("span");
+      c.className = "chip"; c.textContent = "$" + p.value;
+      chips.appendChild(c);
+    });
+  }
+
+  // ----- account and online save -----
+  // A player signed in to Claude who has access to this game can save to their account.
+  // Everyone else keeps saving in this browser. Each account's save is private to that account.
+  var acct = { mode: "guest", ref: null, name: "", avatar: "", fail: "", busy: false, dirty: false, timer: null, lastSaved: 0 };
+
+  function withTimeout(p, ms) {
+    return Promise.race([p, new Promise(function (res) { setTimeout(function () { res(null); }, ms); })]);
+  }
+  function norm(r) { return r > 0 ? r : CONFIG.taps; }
+  // Combine two saves: the one with more eggs cracked wins, then the one closer to zero. Rewards from both are kept.
+  function merge(a, b) {
+    var base = a.eggs !== b.eggs ? (a.eggs > b.eggs ? a : b) : (norm(a.remaining) <= norm(b.remaining) ? a : b);
+    var seen = {}, rw = [];
+    (a.rewards || []).concat(b.rewards || []).forEach(function (r) {
+      if (!r || !Number.isFinite(r.value) || !Number.isFinite(r.at)) return;
+      var k = r.id + "|" + r.at;
+      if (seen[k]) return;
+      seen[k] = 1;
+      rw.push({ id: r.id, value: r.value, at: r.at });
+    });
+    rw.sort(function (x, y) { return y.at - x.at; });
+    return { remaining: norm(base.remaining), charge: Math.min(Math.max(base.charge | 0, 0), CONFIG.chargeTaps), eggs: base.eggs, rewards: rw.slice(0, 200) };
+  }
+  function applyMerged(m) {
+    if (!m) return;
+    if (!state.broken) { state.remaining = m.remaining; state.charge = m.charge; }
+    state.eggs = Math.max(state.eggs, m.eggs);
+    state.rewards = m.rewards;
+    fresh = false;
+    render(); renderBonus(); renderRewards();
+    if (state.remaining < CONFIG.taps) hint.classList.add("off");
+    save();
+  }
+
+  async function connect(manual) {
+    if (acct.mode === "cloud" || acct.mode === "connecting") return;
+    var cl = window.claude;
+    acct.fail = "";
+    if (!cl || typeof cl.use !== "function") { if (manual) acct.fail = "unavailable"; renderMenu(); return; }
+    acct.mode = "connecting";
+    renderMenu();
+    try {
+      if (manual) {
+        var perms = await withTimeout(cl.use("permissions"), 10000);
+        if (perms) await perms.request(["db", "user"]);
+      }
+      var got = await Promise.all([withTimeout(cl.use("user"), 10000), withTimeout(cl.use("db"), 10000)]);
+      if (!got[0] || !got[1]) throw new Error("unavailable");
+      var me = await got[0].me();
+      if (!me || !me.id) throw new Error("noid");
+      var ref = got[1].doc("data/users/" + me.id + "/save");
+      var snap = await ref.get();
+      var cloud = snap.exists ? snap.data() : null;
+      var ok = cloud && cloud.total === CONFIG.taps && cloud.sig === sign(cloud) && Number.isInteger(cloud.remaining) && Number.isInteger(cloud.eggs) && Array.isArray(cloud.rewards);
+      acct.ref = ref; acct.name = me.name || ""; acct.avatar = me.avatarUrl || ""; acct.mode = "cloud";
+      applyMerged(ok ? merge(snapNow(), cloud) : null);
+      acct.dirty = true;
+      flush();
+    } catch (e) {
+      acct.mode = "guest";
+      acct.fail = manual ? (e && e.message === "noid" ? "noid" : "unavailable") : "";
+    }
+    renderMenu();
+  }
+
+  function cloudQueue(now) {
+    if (acct.mode !== "cloud") return;
+    acct.dirty = true;
+    if (now) flush();
+    else if (!acct.timer) acct.timer = setTimeout(flush, 5000);
+  }
+  async function flush() {
+    clearTimeout(acct.timer);
+    acct.timer = null;
+    if (acct.mode !== "cloud" || acct.busy || !acct.dirty) return;
+    acct.busy = true;
+    acct.dirty = false;
+    var o = snapNow();
+    o.sig = sign(o);
+    o.updatedAt = Date.now();
+    try {
+      await acct.ref.set(o);
+      acct.lastSaved = Date.now();
+    } catch (e) {
+      var c = e && e.code;
+      if (c === "invalid_argument" || c === "revoked" || c === "not_granted" || c === "quota_exceeded") { acct.mode = "guest"; acct.fail = "readonly"; }
+      else { acct.dirty = true; acct.timer = setTimeout(flush, 15000); }
+    }
+    acct.busy = false;
+    if (acct.mode === "cloud" && acct.dirty && !acct.timer) acct.timer = setTimeout(flush, 5000);
+    renderMenu();
+  }
+
+  function renderMenu() {
+    var cloud = acct.mode === "cloud";
+    $("acctName").textContent = cloud ? (acct.name || "Signed in") : "Guest";
+    var note = "Progress saves in this browser only.";
+    if (acct.mode === "connecting") note = "Connecting\u2026";
+    if (cloud) {
+      note = "Progress autosaves to your account.";
+      if (acct.lastSaved) note += " Last saved " + new Date(acct.lastSaved).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) + ".";
+    }
+    $("acctNote").textContent = note;
+    var av = $("avatar");
+    av.replaceChildren();
+    if (cloud && acct.avatar) {
+      var im = document.createElement("img");
+      im.alt = ""; im.src = acct.avatar;
+      av.appendChild(im);
+    } else {
+      av.textContent = cloud ? ((acct.name || "?").charAt(0).toUpperCase()) : "G";
+    }
+    var lb = $("loginBtn");
+    lb.hidden = cloud;   // logged in: progress autosaves, so there is nothing to press
+    lb.disabled = acct.mode === "connecting";
+    lb.textContent = acct.mode === "connecting" ? "Connecting\u2026" : "Log in to save online";
+    var msg = "";
+    if (acct.fail === "noid") msg = "You are not signed in to Claude. Sign in, then tap Log in again. Your progress is still saved in this browser.";
+    else if (acct.fail === "unavailable") msg = "Could not log in. Online saving needs a Claude account that has access to this game. Your progress is still saved in this browser.";
+    else if (acct.fail === "readonly") msg = "Your account can open this game but cannot save online. Your progress is still saved in this browser.";
+    var ln = $("loginNote");
+    ln.textContent = msg;
+    ln.hidden = !msg;
+    $("loginLink").hidden = !msg || acct.fail === "readonly";
+    $("openMenu").classList.toggle("is-cloud", cloud);
+    var stats = $("menuStats");
+    stats.replaceChildren();
+    [state.remaining.toLocaleString() + " taps left", state.eggs + (state.eggs === 1 ? " egg cracked" : " eggs cracked"), state.rewards.length + (state.rewards.length === 1 ? " reward" : " rewards")].forEach(function (t) {
+      var c = document.createElement("span");
+      c.className = "chip"; c.textContent = t;
+      stats.appendChild(c);
+    });
+  }
+
+  $("openMenu").addEventListener("click", function () { renderMenu(); openModal(menuModal); });
+  $("closeMenu").addEventListener("click", function () { closeModal(menuModal); });
+  $("menuRewards").addEventListener("click", function () { menuModal.hidden = true; renderRewards(); openModal(rewardsModal); });
+  $("loginBtn").addEventListener("click", function () {
+    connect(true);
+  });
+
+  // save when the player leaves the page, so no taps are lost
+  window.addEventListener("pagehide", function () { save(true); });
+  document.addEventListener("visibilitychange", function () { if (document.hidden) save(true); });
+
+  // ----- start -----
+  render();
+  renderBonus();
+  renderRewards();
+  renderMenu();
+  if (state.remaining < CONFIG.taps) hint.classList.add("off");
+  connect(false);   // already signed in to Claude? connect quietly and sync
+})();
+</script>
+
+</body></html>
