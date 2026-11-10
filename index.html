@@ -748,7 +748,7 @@ body::after {
   // One press at a time, real (trusted) input only, and a speed limit.
   // Fast, metronome-regular or instant (0 ms) presses count as an auto clicker and lock the egg.
   // This runs in the browser, so it slows auto clickers down but cannot stop every one.
-  var MIN_GAP = 90;      // ms between taps (about 11 a second at most)
+  var MIN_GAP = 70;      // ms between taps (about 14 a second at most)
   var MIN_HOLD = 10;     // ms a press must last; auto clickers release almost instantly
   var G = { id: null, downAt: 0, last: 0, gaps: [], holds: [], blocked: 0, strikes: 0, lastStrike: 0, until: 0, timer: null };
   var lockEl = $("lock");
@@ -781,7 +781,7 @@ body::after {
     if (now - G.lastStrike > 300000) G.strikes = 0;
     G.lastStrike = now;
     G.strikes += 1;
-    lockFor([10, 30, 90][Math.min(G.strikes, 3) - 1]);
+    lockFor(10);   // always 10 seconds
   }
   // a short message over the egg
   var noticeTimer = null;
@@ -796,13 +796,13 @@ body::after {
   function accept(t, hold) {
     if (document.hidden || state.broken || locked()) return false;
     var gap = G.last ? t - G.last : Infinity;
-    if (gap < MIN_GAP) { if (++G.blocked >= 6) strike(); return false; }
+    if (gap < MIN_GAP) { if (++G.blocked >= 10) strike(); return false; }
     G.blocked = 0;
     G.last = t;
-    if (gap < 1500) { G.gaps.push(gap); if (G.gaps.length > 14) G.gaps.shift(); } else G.gaps = [];
-    if (hold !== null) { G.holds.push(hold); if (G.holds.length > 14) G.holds.shift(); } else G.holds = [];
-    if (G.gaps.length >= 12 && mean(G.gaps) < 450 && stdev(G.gaps) < 8) { strike(); return false; }
-    if (G.holds.length >= 12 && stdev(G.holds) < 1.5) { strike(); return false; }
+    if (gap < 1500) { G.gaps.push(gap); if (G.gaps.length > 24) G.gaps.shift(); } else G.gaps = [];
+    if (hold !== null) { G.holds.push(hold); if (G.holds.length > 24) G.holds.shift(); } else G.holds = [];
+    if (G.gaps.length >= 20 && mean(G.gaps) < 450 && stdev(G.gaps) < 3) { strike(); return false; }
+    if (G.holds.length >= 20 && stdev(G.holds) < 0.8) { strike(); return false; }
     return true;
   }
 
@@ -822,7 +822,7 @@ body::after {
     if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) return;  // dragged off the egg
     var hold = e.timeStamp - G.downAt;
     if (hold > 1500) return;                                         // long press, not a tap
-    if (hold < MIN_HOLD) { if (++G.blocked >= 6) strike(); return; }
+    if (hold < MIN_HOLD) { if (++G.blocked >= 10) strike(); return; }
     if (accept(e.timeStamp, hold)) tap(e);
   });
   function dropPress(e) { if (e.pointerId === G.id) G.id = null; }
@@ -1017,9 +1017,18 @@ body::after {
   $("winRewards").addEventListener("click", function () { winModal.hidden = true; openModal(rewardsModal); });
   $("openRewards").addEventListener("click", function () { renderRewards(); openModal(rewardsModal); });
   $("closeRewards").addEventListener("click", function () { closeModal(rewardsModal); });
+  // Tapping the dark area closes a pop-up. It closes on the finger lifting (click), not on the finger
+  // landing: closing on touch-down uncovers the button underneath, and the same tap then clicks it
+  // (that is what made the menu close and instantly reopen). The press must also START on the dark area.
   [winModal, rewardsModal, menuModal, authModal].forEach(function (m) {
-    m.addEventListener("pointerdown", function (e) {
-      if (e.target === m) { m.hidden = true; if (m === winModal) again.hidden = false; }
+    var startedOnBackdrop = false;
+    m.addEventListener("pointerdown", function (e) { startedOnBackdrop = e.target === m; });
+    m.addEventListener("click", function (e) {
+      if (e.target !== m || !startedOnBackdrop) return;
+      startedOnBackdrop = false;
+      e.preventDefault();
+      m.hidden = true;
+      if (m === winModal) again.hidden = false;
     });
   });
   document.addEventListener("keydown", function (e) {

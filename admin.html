@@ -667,7 +667,7 @@ td input { width: 150px; max-width: 100%; padding: 6px 8px; border-radius: 10px;
     U.save.disabled = false;
   }
   async function setRemaining(v) {
-    if (!(v >= 1 && v <= U.total)) { U.tmsg.className = "msg err"; setText(U.tmsg, "Enter a whole number from 1 to " + NUM(U.total) + "."); return; }
+    if (!(v >= 1 && v <= 999999)) { U.tmsg.className = "msg err"; setText(U.tmsg, "Enter a whole number from 1 to 999,999."); return; }
     U.tbtn.disabled = U.tfull.disabled = true;
     try {
       var d = await rpc("admin_set_remaining", { p_id: U.id, p_value: v });
@@ -687,7 +687,7 @@ td input { width: 150px; max-width: 100%; padding: 6px 8px; border-radius: 10px;
   function paintUser(d) {
     var now = d.now;
     U.total = d.total;
-    U.tin.max = d.total;
+    U.tin.max = 999999;
     setText(U.title, nm(d));
     setText(U.sub, "Joined " + ago(d.created_at, now) + " · " + when(d.created_at) + (d.is_admin ? " · admin" : ""));
     var st = statusOf(d, now); U.chip.className = "chip " + st.cls; U.chipDot.hidden = !st.live; setText(U.chipTxt, st.txt + (d.bonus_active ? " · x2 on" : ""));
@@ -714,7 +714,7 @@ td input { width: 150px; max-width: 100%; padding: 6px 8px; border-radius: 10px;
     // numbers
     var T = U.tiles;
     setText(T.lifetime.v, NUM(d.lifetime_taps)); setText(T.lifetime.s, "counted by the server");
-    setText(T.today.v, NUM(d.taps_today)); setText(T.today.s, "limit " + NUM(d.daily_cap) + " a day");
+    setText(T.today.v, NUM(d.taps_today)); setText(T.today.s, "UTC day");
     setText(T.eggs.v, NUM(d.eggs)); setText(T.eggs.s, d.rewards_won + " gift card" + (d.rewards_won === 1 ? "" : "s") + " won");
     setText(T.strikes.v, NUM(d.strikes)); setText(T.strikes.s, d.locked_s > 0 ? "locked for " + d.locked_s + "s" : "not locked");
     barChart(U.chart, d.days, "taps", "b");
