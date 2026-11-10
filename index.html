@@ -1,9 +1,14 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Egg Crack</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Cpath d=%27M50 8C30 8 16 44 16 68c0 16 15 26 34 26s34-10 34-26C84 44 70 8 50 8Z%27 fill=%27%23ffc62e%27 stroke=%27%2314194d%27 stroke-width=%278%27/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@700;800&display=swap">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{-webkit-text-size-adjust:100%}body{margin:0}[hidden]{display:none!important}</style>
 <style>
 /* Layout: one centered play column (header, banner ad, taps counter, egg, bonus row, banner ad) with tall ad rails either side on wide screens. */
 :root {
@@ -45,7 +50,10 @@ body {
 body::after {
   content: "";
   position: fixed;
-  inset: -40%;
+  /* a centered square far larger than the screen, so its corners never show while it spins */
+  left: 50%; top: 50%;
+  width: 300vmax; height: 300vmax;
+  margin: -150vmax 0 0 -150vmax;
   z-index: 0;
   pointer-events: none;
   background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,.10) 0deg 9deg, rgba(255,255,255,0) 9deg 18deg);
@@ -317,6 +325,16 @@ body::after {
 .acct-text strong { font: 800 20px/1.1 var(--font-display); overflow-wrap: anywhere; }
 .acct-text span { font-size: 13px; line-height: 1.25; color: var(--muted); font-weight: 800; }
 .sheet a.link { color: var(--sky-2); font: 800 16px/1.2 var(--font-display); }
+.field { display: grid; gap: 6px; width: 100%; text-align: left; font: 800 13px/1 var(--font-body); color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.field input { width: 100%; min-width: 0; font: 700 18px/1.2 var(--font-body); letter-spacing: 0; text-transform: none; color: var(--ink); background: #f1f6ff; border: 3px solid var(--ink); border-radius: 14px; padding: 12px 14px; }
+.field input:focus-visible { outline: 3px solid var(--sky-2); outline-offset: 2px; }
+.err { color: #b3125a; font-weight: 800; }
+.hintline { margin: 0; font-size: 13px; color: var(--muted); font-weight: 700; }
+.sheet .okmsg { color: #0a7a4f; font-weight: 800; }
+.linkbtn { all: unset; cursor: pointer; text-align: center; padding: 6px; font: 800 15px/1.2 var(--font-display); color: var(--sky-2); text-decoration: underline; }
+.linkbtn:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.chip--small { font-size: 13px; padding: 3px 10px; white-space: nowrap; }
+.booting .digits, .booting .stage { opacity: .45; pointer-events: none; }
 .stats { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
 .chip { border: 3px solid var(--ink); border-radius: 999px; padding: 4px 12px; font: 800 15px/1.1 var(--font-display); background: var(--gold); }
 .label { font: 800 12px/1 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
@@ -343,7 +361,8 @@ body::after {
   .half-top, .half-bot, .gift, .crack { transition-duration: .01s; transition-delay: 0s; }
 }
 </style>
-
+</head>
+<body>
 <div class="shell">
 
   <main class="play">
@@ -475,6 +494,23 @@ body::after {
   </div>
 </div>
 
+<div class="modal" id="authModal" hidden role="dialog" aria-modal="true" aria-labelledby="authTitle">
+  <form class="sheet" id="authForm" novalidate>
+    <h2 id="authTitle">Log in</h2>
+    <p id="authIntro">Log in to play. Your taps and rewards are saved to your account.</p>
+    <label class="field" id="emailField"><span>Username</span><input id="authEmail" type="text" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="20"></label>
+    <label class="field" id="pwField"><span id="pwLabel">Password</span><input id="authPassword" type="password" autocomplete="current-password"></label>
+    <p class="err" id="authErr" role="alert" hidden></p>
+    <p class="okmsg" id="authOk" role="status" hidden></p>
+    <p class="hintline" id="authHint">3 to 20 letters, numbers or underscores. Forgot your password? Ask the game admin to reset it.</p>
+    <div class="actions">
+      <button class="btn btn--pink" id="authSubmit" type="submit">Log in</button>
+      <button class="btn btn--plain" id="authSwitch" type="button">Create an account</button>
+      <button class="linkbtn" id="authCancel" type="button">Not now</button>
+    </div>
+  </form>
+</div>
+
 <div class="modal" id="menuModal" hidden role="dialog" aria-modal="true" aria-labelledby="menuTitle">
   <div class="sheet">
     <h2 id="menuTitle">Menu</h2>
@@ -483,11 +519,11 @@ body::after {
       <div class="acct-text"><strong id="acctName">Guest</strong><span id="acctNote">Progress saves in this browser only.</span></div>
     </div>
     <p id="loginNote" hidden></p>
-    <a class="link" id="loginLink" href="https://claude.ai/login" target="_blank" rel="noopener" hidden>Sign in to Claude</a>
     <div class="stats" id="menuStats"></div>
     <div class="actions">
-      <button class="btn btn--pink" id="loginBtn" type="button">Log in to save online</button>
+      <button class="btn btn--pink" id="loginBtn" type="button">Log in or sign up</button>
       <button class="btn" id="menuRewards" type="button">My rewards</button>
+      <button class="btn btn--plain" id="logoutBtn" type="button" hidden>Log out</button>
       <button class="btn btn--plain" id="closeMenu" type="button">Back to the egg</button>
     </div>
   </div>
@@ -513,6 +549,15 @@ body::after {
 
   // Settings you can change.
   var CONFIG = {
+    // Your backend (see README.md). Leave both empty and the game runs in this browser only.
+    backend: {
+      url: "https://dufpkasmoregkcubecwd.supabase.co",        // for example "https://abcdefgh.supabase.co"
+      anonKey: "sb_publishable_CooqCv4r8QJc8hoHQsMm6A_XIQa16Nj",    // the public "anon" / "publishable" key from Supabase > Project Settings > API
+      // Players log in with a username. Supabase wants an email, so "bob" is stored as bob@<this domain>.
+      // No email is ever sent. Use a domain you own (see README.md).
+      emailDomain: "eggcrack.run.place"
+    },
+    // With a backend, the numbers below come from the game_config and prizes tables instead.
     taps: 51897,        // taps needed to break one egg (every new player starts here)
     chargeTaps: 50,     // taps needed to charge the x2 bonus
     bonusSeconds: 15,   // how long x2 lasts
@@ -536,10 +581,24 @@ body::after {
   var power = $("power"), mult = $("mult");
   var cracks = Array.prototype.slice.call(document.querySelectorAll(".crack"));
 
-  var state = { remaining: CONFIG.taps, charge: 0, rewards: [], eggs: 0, broken: false };
+  var state = { remaining: CONFIG.taps, charge: 0, rewards: [], eggs: 0, broken: false, loading: false };
   var bonusUntil = 0, bonusTimer = null, saveTick = 0, lastFocus = null;
 
-  // ----- storage (per browser, optional) -----
+  // With a backend set up, the server runs the game and an account is needed to play.
+  var BACKEND_ON = !!(CONFIG.backend && CONFIG.backend.url && CONFIG.backend.anonKey);
+  var AUTH_KEY = "crack-the-egg-auth";
+  function readSession() {
+    try {
+      var x = JSON.parse(localStorage.getItem(AUTH_KEY) || "null");
+      return x && x.access_token && x.refresh_token ? x : null;
+    } catch (e) { return null; }
+  }
+  function writeSession(x) {
+    try { if (x) localStorage.setItem(AUTH_KEY, JSON.stringify(x)); else localStorage.removeItem(AUTH_KEY); } catch (e) {}
+  }
+  var HAS_SESSION = BACKEND_ON && !!readSession();
+
+  // ----- storage (only used when no backend is set up) -----
   // Saved progress carries a checksum, so progress edited by hand is thrown away on load.
   function sign(o) {
     var rw = Array.isArray(o.rewards) ? o.rewards.map(function (r) { return r && (r.value + "@" + r.at); }).join(",") : "";
@@ -548,28 +607,29 @@ body::after {
     for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
     return (h >>> 0).toString(16);
   }
-  try {
-    var saved = JSON.parse(localStorage.getItem(KEY) || "null");
-    if (saved && saved.total === CONFIG.taps && saved.sig === sign(saved)) {
-      if (Number.isInteger(saved.remaining) && saved.remaining > 0 && saved.remaining <= CONFIG.taps) state.remaining = saved.remaining;
-      if (Number.isInteger(saved.charge) && saved.charge >= 0) state.charge = Math.min(saved.charge, CONFIG.chargeTaps);
-      if (Number.isInteger(saved.eggs) && saved.eggs >= 0) state.eggs = saved.eggs;
-      if (Array.isArray(saved.rewards)) {
-        state.rewards = saved.rewards.filter(function (r) { return r && Number.isFinite(r.value) && Number.isFinite(r.at); }).slice(0, 200);
+  if (!BACKEND_ON) {
+    try {
+      var saved = JSON.parse(localStorage.getItem(KEY) || "null");
+      if (saved && saved.total === CONFIG.taps && saved.sig === sign(saved)) {
+        if (Number.isInteger(saved.remaining) && saved.remaining > 0 && saved.remaining <= CONFIG.taps) state.remaining = saved.remaining;
+        if (Number.isInteger(saved.charge) && saved.charge >= 0) state.charge = Math.min(saved.charge, CONFIG.chargeTaps);
+        if (Number.isInteger(saved.eggs) && saved.eggs >= 0) state.eggs = saved.eggs;
+        if (Array.isArray(saved.rewards)) {
+          state.rewards = saved.rewards.filter(function (r) { return r && Number.isFinite(r.value) && Number.isFinite(r.at); }).slice(0, 200);
+        }
       }
-    }
-  } catch (e) {}
+    } catch (e) {}
+  }
   function snapNow() { return { total: CONFIG.taps, remaining: state.remaining, charge: state.charge, eggs: state.eggs, rewards: state.rewards }; }
-  // Saves in this browser, and to the player's account too when they are logged in.
-  function save(now) {
+  function save() {
+    if (BACKEND_ON) return;   // with a backend the server keeps the progress
     try {
       var o = snapNow();
       o.sig = sign(o);
       localStorage.setItem(KEY, JSON.stringify(o));
     } catch (e) {}
-    cloudQueue(!!now);
   }
-  var fresh = state.remaining === CONFIG.taps && state.eggs === 0;   // true until the first tap is saved
+  var fresh = !BACKEND_ON && state.remaining === CONFIG.taps && state.eggs === 0;   // true until the first tap is saved
 
   // ----- counter -----
   var digitsEl = $("digits"), digitEls = [];
@@ -648,24 +708,39 @@ body::after {
     bonusTimer = null;
     renderBonus();
   }
-  bonusBtn.addEventListener("click", function () {
+  bonusBtn.addEventListener("click", async function () {
     if (state.broken || bonusActive() || state.charge < CONFIG.chargeTaps) return;
-    showRewardedAd(activateBonus);
+    if (!server.on) { showRewardedAd(activateBonus); return; }
+    // On the server: send any waiting taps, then ask it to open the ad break. It times the break itself.
+    bonusBtn.disabled = true;
+    try {
+      await flushAll();
+      var s = await rpc("begin_ad");
+      applyServer(s);
+      if (s.ok) showRewardedAd(startServerBonus);
+      else notice("The bonus is not ready yet. Keep tapping.", 3500);
+    } catch (e) {
+      if (e.auth) return expireSession();
+      notice("Could not reach the server. Try again.", 3500);
+      renderBonus();
+    }
   });
 
   // ----- tapping -----
   function tap(e) {
-    if (state.broken) return;
+    if (state.broken || state.loading) return;
+    if (BACKEND_ON && !server.on) { openAuth("login"); return; }   // an account is needed to play
     var active = bonusActive();
-    var dec = Math.min(active ? 2 : 1, state.remaining);
+    var dec = Math.max(0, Math.min(active ? 2 : 1, state.remaining - (server.on ? 1 : 0)));   // the server confirms the final break
     state.remaining -= dec;
     if (!active) state.charge = Math.min(CONFIG.chargeTaps, state.charge + 1);
     hint.classList.add("off");
     if (fresh) { fresh = false; save(); }   // the first tap is saved straight away
-    hit(e, dec, active);
+    hit(e, dec || 1, active);
     render();
     renderBonus();
-    if (state.remaining <= 0) breakEgg();
+    if (server.on) { server.pending++; queueSync(state.remaining <= 1); }
+    else if (state.remaining <= 0) breakEgg();
     else if (++saveTick % 10 === 0) save();
   }
 
@@ -682,13 +757,8 @@ body::after {
   function stdev(a) { var m = mean(a); return Math.sqrt(mean(a.map(function (v) { return (v - m) * (v - m); }))); }
   function locked() { return performance.now() < G.until; }
 
-  function strike() {
-    var now = performance.now();
-    if (now - G.lastStrike > 300000) G.strikes = 0;
-    G.lastStrike = now;
-    G.strikes += 1;
-    var secs = [10, 30, 90][Math.min(G.strikes, 3) - 1];
-    G.until = now + secs * 1000;
+  function lockFor(secs) {
+    G.until = performance.now() + secs * 1000;
     G.gaps = []; G.holds = []; G.blocked = 0; G.last = 0; G.id = null;
     egg.classList.add("locked");
     clearInterval(G.timer);
@@ -705,6 +775,21 @@ body::after {
     }
     tick();
     G.timer = setInterval(tick, 250);
+  }
+  function strike() {
+    var now = performance.now();
+    if (now - G.lastStrike > 300000) G.strikes = 0;
+    G.lastStrike = now;
+    G.strikes += 1;
+    lockFor([10, 30, 90][Math.min(G.strikes, 3) - 1]);
+  }
+  // a short message over the egg
+  var noticeTimer = null;
+  function notice(text, ms) {
+    lockEl.textContent = text;
+    lockEl.hidden = false;
+    clearTimeout(noticeTimer);
+    noticeTimer = setTimeout(function () { if (!locked()) lockEl.hidden = true; }, ms || 3000);
   }
 
   // true when the tap looks like a person
@@ -808,12 +893,18 @@ body::after {
     return CONFIG.prizes[0].value;
   }
 
-  function breakEgg() {
+  function breakEgg(serverPrize) {
     state.broken = true;
-    state.eggs += 1;
-    var value = pickPrize();
-    state.rewards.unshift({ id: Date.now(), value: value, at: Date.now() });
-    save(true);
+    var value;
+    if (server.on) {
+      value = serverPrize;   // the server picked the prize and already saved it
+      server.pending = 0;
+    } else {
+      state.eggs += 1;
+      value = pickPrize();
+      state.rewards.unshift({ id: Date.now(), value: value, at: Date.now() });
+      save(true);
+    }
     renderRewards();
     cardValue.textContent = "$" + value;
     egg.setAttribute("aria-disabled", "true");
@@ -840,6 +931,7 @@ body::after {
     save();
     render();
     renderBonus();
+    if (server.on) refreshState();
   }
   again.addEventListener("click", newEgg);
 
@@ -875,7 +967,7 @@ body::after {
     m.hidden = true;
     if (lastFocus && lastFocus.focus && document.contains(lastFocus) && !lastFocus.hidden) lastFocus.focus();
   }
-  var winModal = $("winModal"), rewardsModal = $("rewardsModal"), adModal = $("adModal"), menuModal = $("menuModal");
+  var winModal = $("winModal"), rewardsModal = $("rewardsModal"), adModal = $("adModal"), menuModal = $("menuModal"), authModal = $("authModal");
 
   // ----- ad break before the boost -----
   // This placeholder counts down while the ad slot shows. To use a real rewarded ad,
@@ -925,7 +1017,7 @@ body::after {
   $("winRewards").addEventListener("click", function () { winModal.hidden = true; openModal(rewardsModal); });
   $("openRewards").addEventListener("click", function () { renderRewards(); openModal(rewardsModal); });
   $("closeRewards").addEventListener("click", function () { closeModal(rewardsModal); });
-  [winModal, rewardsModal, menuModal].forEach(function (m) {
+  [winModal, rewardsModal, menuModal, authModal].forEach(function (m) {
     m.addEventListener("pointerdown", function (e) {
       if (e.target === m) { m.hidden = true; if (m === winModal) again.hidden = false; }
     });
@@ -933,6 +1025,7 @@ body::after {
   document.addEventListener("keydown", function (e) {
     if (e.key !== "Escape") return;
     if (!adModal.hidden) cancelAd();
+    else if (!authModal.hidden) closeModal(authModal);
     else if (!rewardsModal.hidden) closeModal(rewardsModal);
     else if (!menuModal.hidden) closeModal(menuModal);
     else if (!winModal.hidden) closeModal(winModal);
@@ -962,7 +1055,24 @@ body::after {
       dt.textContent = "Won " + new Date(r.at).toLocaleDateString(undefined, { month: "short", day: "numeric" });
       meta.append(t, dt);
       li.append(chip, meta);
-      if (CONFIG.claimUrl) {
+      if (server.on) {
+        if (r.status === "won") {
+          var cb = document.createElement("button");
+          cb.type = "button"; cb.className = "btn btn--small"; cb.textContent = "Claim";
+          cb.addEventListener("click", function () { claimReward(r.id, cb); });
+          li.appendChild(cb);
+        } else if (r.status === "requested") {
+          var rq = document.createElement("span");
+          rq.className = "chip chip--small"; rq.textContent = "Claim requested";
+          li.appendChild(rq);
+        } else if (r.status === "fulfilled" && r.code) {
+          dt.textContent = "Code: " + r.code;
+          var cp = document.createElement("button");
+          cp.type = "button"; cp.className = "btn btn--small"; cp.textContent = "Copy";
+          cp.addEventListener("click", function () { copyText(r.code, cp); });
+          li.appendChild(cp);
+        }
+      } else if (CONFIG.claimUrl) {
         var a = document.createElement("a");
         a.className = "btn btn--small"; a.textContent = "Claim";
         a.href = CONFIG.claimUrl; a.target = "_blank"; a.rel = "noopener";
@@ -987,131 +1097,284 @@ body::after {
     });
   }
 
-  // ----- account and online save -----
-  // A player signed in to Claude who has access to this game can save to their account.
-  // Everyone else keeps saving in this browser. Each account's save is private to that account.
-  var acct = { mode: "guest", ref: null, name: "", avatar: "", fail: "", busy: false, dirty: false, timer: null, lastSaved: 0 };
+  // ----- online accounts (your Supabase backend) -----
+  // When CONFIG.backend is filled in, the server runs the game: it counts the taps, enforces the
+  // speed limit, times the x2 bonus and picks the prizes. This page only reports taps and shows the result.
+  var acct = { email: "", fail: "", lastSync: 0 };
+  // usernames are stored as <username>@<emailDomain> because Supabase logs in with an email
+  var UDOMAIN = String(CONFIG.backend.emailDomain || "").toLowerCase();
+  function validUser(u) { return /^[a-z0-9_]{3,20}$/.test(u); }
+  function toEmail(u) { return u + "@" + UDOMAIN; }
+  function uname(email) { return String(email || "").split("@")[0]; }
+  var server = { on: false, pending: 0, busy: false, timer: null, refreshing: null };
+  var playEl = document.querySelector(".play");
 
-  function withTimeout(p, ms) {
-    return Promise.race([p, new Promise(function (res) { setTimeout(function () { res(null); }, ms); })]);
+  function pickSession(r) {
+    if (!r || !r.access_token || !r.refresh_token) return null;
+    return {
+      access_token: r.access_token, refresh_token: r.refresh_token,
+      expires_at: r.expires_at || (Math.floor(Date.now() / 1000) + (r.expires_in || 3600)),
+      email: (r.user && r.user.email) || ""
+    };
   }
-  function norm(r) { return r > 0 ? r : CONFIG.taps; }
-  // Combine two saves: the one with more eggs cracked wins, then the one closer to zero. Rewards from both are kept.
-  function merge(a, b) {
-    var base = a.eggs !== b.eggs ? (a.eggs > b.eggs ? a : b) : (norm(a.remaining) <= norm(b.remaining) ? a : b);
-    var seen = {}, rw = [];
-    (a.rewards || []).concat(b.rewards || []).forEach(function (r) {
-      if (!r || !Number.isFinite(r.value) || !Number.isFinite(r.at)) return;
-      var k = r.id + "|" + r.at;
-      if (seen[k]) return;
-      seen[k] = 1;
-      rw.push({ id: r.id, value: r.value, at: r.at });
-    });
-    rw.sort(function (x, y) { return y.at - x.at; });
-    return { remaining: norm(base.remaining), charge: Math.min(Math.max(base.charge | 0, 0), CONFIG.chargeTaps), eggs: base.eggs, rewards: rw.slice(0, 200) };
+  function authError() { var e = new Error("session"); e.auth = true; return e; }
+  function authHeaders(token) {
+    var headers = { "apikey": CONFIG.backend.anonKey, "Content-Type": "application/json" };
+    if (token) headers.Authorization = "Bearer " + token;
+    return headers;
   }
-  function applyMerged(m) {
-    if (!m) return;
-    if (!state.broken) { state.remaining = m.remaining; state.charge = m.charge; }
-    state.eggs = Math.max(state.eggs, m.eggs);
-    state.rewards = m.rewards;
-    fresh = false;
-    render(); renderBonus(); renderRewards();
-    if (state.remaining < CONFIG.taps) hint.classList.add("off");
-    save();
+  async function http(path, opts) {
+    var res = await fetch(CONFIG.backend.url.replace(/\/+$/, "") + path, opts);
+    var body = null;
+    try { body = await res.json(); } catch (e) {}
+    if (!res.ok) {
+      var err = new Error((body && (body.msg || body.message || body.error_description || body.error)) || ("Request failed (" + res.status + ")"));
+      err.status = res.status;
+      err.code = (body && (body.error_code || body.code)) || "";
+      throw err;
+    }
+    return body;
+  }
+  function authCall(path, payload, token) {
+    return http(path, { method: "POST", headers: authHeaders(token), body: JSON.stringify(payload || {}) });
   }
 
-  async function connect(manual) {
-    if (acct.mode === "cloud" || acct.mode === "connecting") return;
-    var cl = window.claude;
-    acct.fail = "";
-    if (!cl || typeof cl.use !== "function") { if (manual) acct.fail = "unavailable"; renderMenu(); return; }
-    acct.mode = "connecting";
-    renderMenu();
+  // a login token that is valid for at least another minute (refreshes it when needed)
+  async function freshToken() {
+    var x = readSession();
+    if (!x) throw authError();
+    if (x.expires_at - Date.now() / 1000 > 60) return x.access_token;
+    if (!server.refreshing) {
+      server.refreshing = authCall("/auth/v1/token?grant_type=refresh_token", { refresh_token: x.refresh_token })
+        .then(function (r) {
+          var n = pickSession(r);
+          if (!n) throw authError();
+          n.email = n.email || x.email;
+          writeSession(n);
+          return n;
+        }, function (e) {
+          if (e.status === 400 || e.status === 401 || e.status === 403) throw authError();
+          throw e;
+        })
+        .finally(function () { server.refreshing = null; });
+    }
+    return (await server.refreshing).access_token;
+  }
+  // call one of the game functions on the server
+  async function rpc(fn, args, keepalive, retried) {
+    var token = await freshToken();
     try {
-      if (manual) {
-        var perms = await withTimeout(cl.use("permissions"), 10000);
-        if (perms) await perms.request(["db", "user"]);
+      return await http("/rest/v1/rpc/" + fn, { method: "POST", headers: authHeaders(token), body: JSON.stringify(args || {}), keepalive: !!keepalive });
+    } catch (e) {
+      if (e.status === 401) {
+        var x = readSession();
+        if (x && !retried) { x.expires_at = 0; writeSession(x); return rpc(fn, args, keepalive, true); }
+        e.auth = true;
       }
-      var got = await Promise.all([withTimeout(cl.use("user"), 10000), withTimeout(cl.use("db"), 10000)]);
-      if (!got[0] || !got[1]) throw new Error("unavailable");
-      var me = await got[0].me();
-      if (!me || !me.id) throw new Error("noid");
-      var ref = got[1].doc("data/users/" + me.id + "/save");
-      var snap = await ref.get();
-      var cloud = snap.exists ? snap.data() : null;
-      var ok = cloud && cloud.total === CONFIG.taps && cloud.sig === sign(cloud) && Number.isInteger(cloud.remaining) && Number.isInteger(cloud.eggs) && Array.isArray(cloud.rewards);
-      acct.ref = ref; acct.name = me.name || ""; acct.avatar = me.avatarUrl || ""; acct.mode = "cloud";
-      applyMerged(ok ? merge(snapNow(), cloud) : null);
-      acct.dirty = true;
-      flush();
-    } catch (e) {
-      acct.mode = "guest";
-      acct.fail = manual ? (e && e.message === "noid" ? "noid" : "unavailable") : "";
+      throw e;
     }
-    renderMenu();
+  }
+  function expireSession() {
+    writeSession(null);
+    try { sessionStorage.setItem("egg-expired", "1"); } catch (e) {}
+    location.reload();
   }
 
-  function cloudQueue(now) {
-    if (acct.mode !== "cloud") return;
-    acct.dirty = true;
-    if (now) flush();
-    else if (!acct.timer) acct.timer = setTimeout(flush, 5000);
+  // ----- showing what the server says -----
+  function mapRewards(list) {
+    return (list || []).map(function (r) { return { id: r.id, value: r.value, at: r.won_at, status: r.status, code: r.code }; });
   }
-  async function flush() {
-    clearTimeout(acct.timer);
-    acct.timer = null;
-    if (acct.mode !== "cloud" || acct.busy || !acct.dirty) return;
-    acct.busy = true;
-    acct.dirty = false;
-    var o = snapNow();
-    o.sig = sign(o);
-    o.updatedAt = Date.now();
+  function setBonusFromServer(ms) {
+    if (ms > 0) {
+      bonusUntil = Date.now() + ms;
+      if (!bonusTimer) bonusTimer = setInterval(function () { if (!bonusActive()) endBonus(); else renderBonus(); }, 100);
+    } else if (bonusActive()) {
+      endBonus();
+    }
+  }
+  // The server's numbers always win. Taps made since the last report are added on top.
+  function applyServer(s) {
+    CONFIG.taps = s.total; CONFIG.chargeTaps = s.charge_taps; CONFIG.bonusSeconds = s.bonus_seconds; CONFIG.adSeconds = s.ad_seconds;
+    CONFIG.prizes = (s.prizes || []).map(function (v) { return { value: v, weight: 1 }; });
+    state.eggs = s.eggs;
+    state.rewards = mapRewards(s.rewards);
+    acct.lastSync = Date.now();
+    if (s.broke) {
+      state.remaining = 0; state.charge = 0;
+      breakEgg(s.prize);
+    } else if (!state.broken) {
+      var live = bonusActive();
+      state.remaining = Math.max(1, s.remaining - server.pending * (live ? 2 : 1));
+      state.charge = Math.min(CONFIG.chargeTaps, s.charge + (live ? 0 : server.pending));
+      setBonusFromServer(s.bonus_ms);
+    }
+    if (s.locked_s > 0) { server.pending = 0; lockFor(s.locked_s); }
+    render(); renderBonus(); renderRewards(); renderMenu();
+  }
+
+  // ----- reporting taps -----
+  function queueSync(now) {
+    if (!server.on) return;
+    if (now) syncNow();
+    else if (!server.timer) server.timer = setTimeout(function () { syncNow(); }, 800);
+  }
+  async function syncNow(keepalive) {
+    clearTimeout(server.timer);
+    server.timer = null;
+    if (!server.on || server.busy || server.pending === 0) return;
+    server.busy = true;
+    var n = Math.min(server.pending, 1000);
+    server.pending -= n;
     try {
-      await acct.ref.set(o);
-      acct.lastSaved = Date.now();
+      applyServer(await rpc("send_taps", { p_n: n }, keepalive));
+      acct.fail = "";
     } catch (e) {
-      var c = e && e.code;
-      if (c === "invalid_argument" || c === "revoked" || c === "not_granted" || c === "quota_exceeded") { acct.mode = "guest"; acct.fail = "readonly"; }
-      else { acct.dirty = true; acct.timer = setTimeout(flush, 15000); }
+      if (e.auth) { server.busy = false; expireSession(); return; }
+      server.pending += n;
+      acct.fail = "network";
+      server.timer = setTimeout(function () { syncNow(); }, 4000);
     }
-    acct.busy = false;
-    if (acct.mode === "cloud" && acct.dirty && !acct.timer) acct.timer = setTimeout(flush, 5000);
-    renderMenu();
+    server.busy = false;
+    if (server.pending > 0 && !server.timer) server.timer = setTimeout(function () { syncNow(); }, 800);
+  }
+  async function flushAll() {
+    for (var i = 0; i < 5 && (server.pending > 0 || server.busy); i++) {
+      if (server.busy) await new Promise(function (r) { setTimeout(r, 120); });
+      else await syncNow();
+    }
+  }
+  async function refreshState() {
+    try { applyServer(await rpc("get_state")); } catch (e) { if (e.auth) expireSession(); }
+  }
+  async function startServerBonus() {
+    try {
+      var s = await rpc("start_bonus");
+      applyServer(s);
+      if (!s.ok) notice("The bonus is not ready yet. Keep tapping.", 3500);
+    } catch (e) {
+      if (e.auth) expireSession();
+      else notice("Could not start the bonus. Try again.", 3500);
+    }
+  }
+  async function claimReward(id, btn) {
+    btn.disabled = true;
+    try { applyServer(await rpc("claim_reward", { p_id: id })); }
+    catch (e) {
+      if (e.auth) return expireSession();
+      btn.disabled = false; btn.textContent = "Try again";
+    }
+  }
+  function fallbackCopy(text) {
+    var ta = document.createElement("textarea");
+    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); } catch (e) {}
+    ta.remove();
+  }
+  function copyText(text, btn) {
+    var done = function () { var o = btn.textContent; btn.textContent = "Copied"; setTimeout(function () { btn.textContent = o; }, 1500); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text); done(); });
+    else { fallbackCopy(text); done(); }
   }
 
+  // ----- log in and sign up (username + password) -----
+  var authMode = "login";
+  function authMsg(kind, text) {
+    var er = $("authErr"), ok = $("authOk");
+    er.hidden = kind !== "err" || !text;
+    ok.hidden = kind !== "ok" || !text;
+    if (kind === "err") er.textContent = text;
+    if (kind === "ok") ok.textContent = text;
+  }
+  function setAuthMode(m) {
+    authMode = m;
+    var isSignup = m === "signup";
+    $("authTitle").textContent = isSignup ? "Create account" : "Log in";
+    $("authPassword").autocomplete = isSignup ? "new-password" : "current-password";
+    $("authSubmit").textContent = isSignup ? "Create account" : "Log in";
+    $("authSwitch").textContent = isSignup ? "I already have an account" : "Create an account";
+  }
+  function openAuth(mode, intro) {
+    setAuthMode(mode || "login");
+    authMsg("", "");
+    $("authIntro").textContent = intro || "Log in to play. Your taps and rewards are saved to your account.";
+    menuModal.hidden = true;
+    openModal(authModal);
+    if (!(window.matchMedia && matchMedia("(pointer: coarse)").matches)) $("authEmail").focus();
+  }
+  function friendly(err) {
+    var c = String(err.code || ""), m = String(err.message || "");
+    var both = c + " " + m;
+    if (err instanceof TypeError) return "Can't reach the server. Check your connection and try again.";
+    if (/invalid_credentials|invalid login/i.test(both)) return "Wrong username or password.";
+    if (/email_not_confirmed|not confirmed/i.test(both)) return "This account is not ready to sign in. Contact the game admin.";
+    if (/already (been )?registered|user_already_exists/i.test(both)) return "That username is taken. Pick another one.";
+    if (/email_address_invalid|invalid.*email|email.*invalid/i.test(both)) return "The server rejected the username. Tell the game admin (email domain setting).";
+    if (/signup.*disabled|signups? not allowed/i.test(both)) return "Sign ups are turned off.";
+    if (/rate.?limit|too many/i.test(both)) return "Too many tries. Wait a few minutes and try again.";
+    return m || "Something went wrong. Try again.";
+  }
+  function finishLogin(r, email) {
+    var x = pickSession(r);
+    if (!x) throw new Error("Could not log in. Try again.");
+    x.email = x.email || email || "";
+    writeSession(x);
+    location.reload();
+  }
+  $("authForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var user = $("authEmail").value.trim().toLowerCase(), pw = $("authPassword").value, btn = $("authSubmit");
+    authMsg("", "");
+    if (!validUser(user)) return authMsg("err", "Username: 3 to 20 letters, numbers or underscores.");
+    if (authMode === "login" && !pw) return authMsg("err", "Enter your password.");
+    if (authMode === "signup" && pw.length < 8) return authMsg("err", "Use a password with at least 8 characters.");
+    var email = toEmail(user);
+    btn.disabled = true;
+    try {
+      if (authMode === "login") {
+        finishLogin(await authCall("/auth/v1/token?grant_type=password", { email: email, password: pw }), email);
+        return;
+      }
+      var r = await authCall("/auth/v1/signup", { email: email, password: pw });
+      if (r && r.access_token) { finishLogin(r, email); return; }
+      // no session back: log straight in
+      finishLogin(await authCall("/auth/v1/token?grant_type=password", { email: email, password: pw }), email);
+      return;
+    } catch (err) {
+      authMsg("err", friendly(err));
+    }
+    btn.disabled = false;
+  });
+  $("authSwitch").addEventListener("click", function () { authMsg("", ""); setAuthMode(authMode === "login" ? "signup" : "login"); });
+  $("authCancel").addEventListener("click", function () { closeModal(authModal); });
+
+  async function logout() {
+    $("logoutBtn").disabled = true;
+    try { await flushAll(); } catch (e) {}
+    var x = readSession();
+    try { if (x) await authCall("/auth/v1/logout", {}, x.access_token); } catch (e) {}
+    writeSession(null);
+    location.reload();
+  }
+
+  // ----- the menu -----
   function renderMenu() {
-    var cloud = acct.mode === "cloud";
-    $("acctName").textContent = cloud ? (acct.name || "Signed in") : "Guest";
-    var note = "Progress saves in this browser only.";
-    if (acct.mode === "connecting") note = "Connecting\u2026";
-    if (cloud) {
+    var on = server.on;
+    $("acctName").textContent = on ? (uname(acct.email) || "Signed in") : "Guest";
+    var note = BACKEND_ON ? "Log in to play and keep your rewards." : "Progress saves in this browser only.";
+    if (on) {
       note = "Progress autosaves to your account.";
-      if (acct.lastSaved) note += " Last saved " + new Date(acct.lastSaved).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) + ".";
+      if (acct.lastSync) note += " Last saved " + new Date(acct.lastSync).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) + ".";
     }
     $("acctNote").textContent = note;
-    var av = $("avatar");
-    av.replaceChildren();
-    if (cloud && acct.avatar) {
-      var im = document.createElement("img");
-      im.alt = ""; im.src = acct.avatar;
-      av.appendChild(im);
-    } else {
-      av.textContent = cloud ? ((acct.name || "?").charAt(0).toUpperCase()) : "G";
-    }
-    var lb = $("loginBtn");
-    lb.hidden = cloud;   // logged in: progress autosaves, so there is nothing to press
-    lb.disabled = acct.mode === "connecting";
-    lb.textContent = acct.mode === "connecting" ? "Connecting\u2026" : "Log in to save online";
-    var msg = "";
-    if (acct.fail === "noid") msg = "You are not signed in to Claude. Sign in, then tap Log in again. Your progress is still saved in this browser.";
-    else if (acct.fail === "unavailable") msg = "Could not log in. Online saving needs a Claude account that has access to this game. Your progress is still saved in this browser.";
-    else if (acct.fail === "readonly") msg = "Your account can open this game but cannot save online. Your progress is still saved in this browser.";
+    $("avatar").textContent = on ? ((uname(acct.email) || "?").charAt(0).toUpperCase()) : "G";
+    $("loginBtn").hidden = on || !BACKEND_ON;
+    $("logoutBtn").hidden = !on;
+    var msg = acct.fail === "network" ? "Can't reach the game server. Retrying…" : "";
     var ln = $("loginNote");
     ln.textContent = msg;
     ln.hidden = !msg;
-    $("loginLink").hidden = !msg || acct.fail === "readonly";
-    $("openMenu").classList.toggle("is-cloud", cloud);
+    $("openMenu").classList.toggle("is-cloud", on);
     var stats = $("menuStats");
     stats.replaceChildren();
     [state.remaining.toLocaleString() + " taps left", state.eggs + (state.eggs === 1 ? " egg cracked" : " eggs cracked"), state.rewards.length + (state.rewards.length === 1 ? " reward" : " rewards")].forEach(function (t) {
@@ -1120,26 +1383,69 @@ body::after {
       stats.appendChild(c);
     });
   }
-
   $("openMenu").addEventListener("click", function () { renderMenu(); openModal(menuModal); });
   $("closeMenu").addEventListener("click", function () { closeModal(menuModal); });
   $("menuRewards").addEventListener("click", function () { menuModal.hidden = true; renderRewards(); openModal(rewardsModal); });
-  $("loginBtn").addEventListener("click", function () {
-    connect(true);
-  });
-
-  // save when the player leaves the page, so no taps are lost
-  window.addEventListener("pagehide", function () { save(true); });
-  document.addEventListener("visibilitychange", function () { if (document.hidden) save(true); });
+  $("loginBtn").addEventListener("click", function () { openAuth("login"); });
+  $("logoutBtn").addEventListener("click", logout);
 
   // ----- start -----
+  async function enterServer() {
+    state.loading = true;
+    playEl.classList.add("booting");
+    try {
+      var first = await rpc("get_state");
+      var x = readSession();
+      if (x && !x.email) {
+        try {
+          var u = await http("/auth/v1/user", { headers: authHeaders(x.access_token) });
+          x.email = (u && u.email) || "";
+          writeSession(x);
+        } catch (e) {}
+      }
+      acct.email = (readSession() || {}).email || "";
+      acct.fail = "";
+      server.on = true;
+      state.loading = false;
+      playEl.classList.remove("booting");
+      hint.textContent = "Tap the egg!";
+      applyServer(first);
+      if (state.remaining < CONFIG.taps) hint.classList.add("off");
+    } catch (e) {
+      if (e.auth) return expireSession();
+      acct.fail = "network";
+      renderMenu();
+      setTimeout(enterServer, 5000);
+    }
+  }
+  // keep rewards up to date (for example when you mark one as fulfilled)
+  setInterval(function () {
+    if (server.on && !server.busy && server.pending === 0 && !state.broken && !document.hidden) refreshState();
+  }, 60000);
+
+  // leaving the page: send the last taps, or save in this browser
+  function leaving() { if (server.on) syncNow(true); else save(); }
+  window.addEventListener("pagehide", leaving);
+  document.addEventListener("visibilitychange", function () { if (document.hidden) leaving(); });
+
   render();
   renderBonus();
   renderRewards();
   renderMenu();
-  if (state.remaining < CONFIG.taps) hint.classList.add("off");
-  connect(false);   // already signed in to Claude? connect quietly and sync
+  if (!BACKEND_ON) {
+    if (state.remaining < CONFIG.taps) hint.classList.add("off");
+  } else {
+    var openedByLink = false;
+    if (HAS_SESSION && !openedByLink) {
+      enterServer();
+    } else if (!HAS_SESSION) {
+      hint.textContent = "Log in to play!";
+      var expired = false;
+      try { expired = sessionStorage.getItem("egg-expired") === "1"; sessionStorage.removeItem("egg-expired"); } catch (e) {}
+      if (expired && !openedByLink) openAuth("login", "Your session ended. Log in again to keep playing.");
+    }
+  }
 })();
 </script>
-
-</body></html>
+</body>
+</html>
