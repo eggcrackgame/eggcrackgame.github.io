@@ -224,10 +224,10 @@ td input { width: 150px; max-width: 100%; padding: 6px 8px; border-radius: 10px;
       </div>
       <div class="cols">
         <div class="card" id="sizeCard">
-          <h2>Taps per egg <small>everyone</small></h2>
-          <p class="note" style="margin:0 0 8px">Players keep their % progress, so nobody loses or gains ground. Applies on their next tap.</p>
+          <h2>First egg size <small>players still on their first egg</small></h2>
+          <p class="note" style="margin:0 0 8px">Every new player's first egg is this size. After it cracks, the next egg is a random size set by its gift card ($5: 120,000 to 190,000, $10: 210,000 to 270,000, $25: 500,000 to 550,000). Changing this only affects players still on their first egg, and they keep their % progress. Later eggs and any taps you set by hand are never changed.</p>
           <div class="field" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <input id="sizeIn" type="number" min="10" step="1" inputmode="numeric" aria-label="Taps per egg" style="width:140px">
+            <input id="sizeIn" type="number" min="10" step="1" inputmode="numeric" aria-label="First egg size" style="width:140px">
             <button class="btn btn--primary btn--small" id="sizeBtn" type="button">Change</button>
             <button class="btn btn--small" id="sizeNo" type="button" hidden>Cancel</button>
           </div>
@@ -464,7 +464,7 @@ td input { width: 150px; max-width: 100%; padding: 6px 8px; border-radius: 10px;
       if (changed) flashEl(r.n);
       P.prev[p.id] = { remaining: p.remaining, t: now };
       r.fill.style.width = Math.max(0, Math.min(100, (1 - p.remaining / p.total) * 100)).toFixed(2) + "%";
-      setText(r.of, ((1 - p.remaining / p.total) * 100).toFixed(1) + "% cracked · of " + NUM(p.total));
+      setText(r.of, Math.max(0, Math.min(100, (1 - p.remaining / p.total) * 100)).toFixed(1) + "% cracked · of " + NUM(p.total));
       var st = statusOf(p, now);
       r.chip.className = "chip " + st.cls; r.dot.hidden = !st.live; setText(r.chipTxt, st.txt);
       var key = P.prizes.join(",") + "|" + p.target_prize;
@@ -571,15 +571,15 @@ td input { width: 150px; max-width: 100%; padding: 6px 8px; border-radius: 10px;
     if (!(v >= 10 && v <= 100000000)) { msg.className = "msg err"; setText(msg, "Enter a whole number from 10 to 100,000,000."); return; }
     if (v === sizeTotal) { msg.className = "msg"; setText(msg, "That is already the current size."); return; }
     if (sizeStage === 0) {
-      sizeStage = 1; $("sizeBtn").textContent = "Confirm: change for everyone"; $("sizeNo").hidden = false;
-      msg.className = "msg"; setText(msg, "Every player's egg goes from " + NUM(sizeTotal) + " to " + NUM(v) + " taps.");
+      sizeStage = 1; $("sizeBtn").textContent = "Confirm first egg size"; $("sizeNo").hidden = false;
+      msg.className = "msg"; setText(msg, "The first egg goes from " + NUM(sizeTotal) + " to " + NUM(v) + " taps for players still on it.");
       return;
     }
     $("sizeBtn").disabled = true;
     try {
       var o = await rpc("admin_set_total", { p_total: v });
       sizeReset(); delete $("sizeIn").dataset.dirty;
-      msg.className = "msg ok"; setText(msg, "Done. Eggs are now " + NUM(v) + " taps.");
+      msg.className = "msg ok"; setText(msg, "Done. First eggs are now " + NUM(v) + " taps.");
       paintSize(o);
     } catch (e) { if (e.auth) return logout(true); msg.className = "msg err"; setText(msg, "Could not change it: " + e.message); sizeReset(); }
     $("sizeBtn").disabled = false;
@@ -695,7 +695,7 @@ td input { width: 150px; max-width: 100%; padding: 6px 8px; border-radius: 10px;
     var rate = U.prev && d.remaining < U.prev.r && now > U.prev.t ? (U.prev.r - d.remaining) / ((now - U.prev.t) / 1000) : 0;
     U.prev = { r: d.remaining, t: now };
     setText(U.big, NUM(d.remaining)); U.rate.hidden = !(rate > 0); setText(U.rate, "↓ " + rate.toFixed(1) + "/s");
-    var pct = (1 - d.remaining / d.total) * 100;
+    var pct = Math.max(0, Math.min(100, (1 - d.remaining / d.total) * 100));
     U.fill.style.width = pct.toFixed(2) + "%";
     setText(U.pct, pct.toFixed(2) + "% cracked · egg size " + NUM(d.total) + " · x2 charge " + d.charge + "/" + d.charge_taps);
     // gift card chooser

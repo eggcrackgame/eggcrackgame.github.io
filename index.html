@@ -654,7 +654,7 @@ body::after {
       }
     });
     digitsEl.setAttribute("aria-label", state.remaining + " taps left");
-    var p = 1 - state.remaining / CONFIG.taps;
+    var p = Math.max(0, Math.min(1, 1 - state.remaining / CONFIG.taps));   // 0 to 1, even if an admin sets more taps than the egg size
     cracks.forEach(function (c) {
       var s = parseFloat(c.dataset.s), e = parseFloat(c.dataset.e);
       var t = Math.max(0, Math.min(1, (p - s) / (e - s)));
@@ -841,7 +841,7 @@ body::after {
   });
 
   function hit(e, dec, active) {
-    var p = 1 - state.remaining / CONFIG.taps;
+    var p = Math.max(0, Math.min(1, 1 - state.remaining / CONFIG.taps));
     var a = 3 + p * 5;
     if (!reduce) {
       svg.animate([
